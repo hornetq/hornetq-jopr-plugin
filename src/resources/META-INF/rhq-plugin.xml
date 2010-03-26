@@ -1,0 +1,755 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE plugin [
+
+      <!ENTITY destinationMetrics '
+                 <metric property="getName"
+                 displayName="Name"
+                 description="name of this destination"
+                 dataType="trait" displayType="summary"/>
+                 <metric property="getJNDIBinding"
+                 displayName="JNDI Binding"
+                 description="JNDI Binding of this destination"
+                 dataType="trait" displayType="summary"/>
+                 <metric property="getAddress"
+                 displayName="Address"
+                 description="Address of this destination"
+                 dataType="trait" displayType="summary"/>
+                 <metric property="isTemporary"
+                 displayName="Temporary"
+                 description="If this destination is temporary"
+                 dataType="trait" displayType="summary"/>
+'>
+      ]>
+
+<plugin name="HornetQ"
+        displayName="HornetQPlugin"
+        description="Supports management and monitoring of HornetQ Servers"
+        package="org.jboss.as.integration.hornetq.jopr"
+        version="2.1.10"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="urn:xmlns:rhq-plugin"
+        xmlns:c="urn:xmlns:rhq-configuration">
+
+   <service name="JMS Manager"
+            discovery="JMSManagerDiscoveryComponent"
+            class="JMSManagerComponent"
+            singleton="true">
+
+      <runs-inside>
+         <parent-resource-type name="JBossAS Server" plugin="JBossAS"/>
+         <parent-resource-type name="JBossAS Server" plugin="JBossAS5"/>
+      </runs-inside>
+
+      <metric property="version"
+                 displayName="HornetQ Version"
+                 description="The HornetQ version"
+                 dataType="trait" displayType="summary"/>
+      <metric property="started"
+                 displayName="Is Started"
+                 description="The HornetQ version"
+                 dataType="trait" displayType="summary"/>
+
+      <service name="JMS Queue"
+               discovery="JMSQueueDiscoveryComponent"
+               class="JMSQueueComponent"
+               createDeletePolicy="both">
+         <operation name="removeMessages" displayName="Remove Messages"
+                    description="Remove all the messages from this queue that match the given message selector. A null selector will delete all messages.">
+            <parameters>
+               <c:simple-property required="false" name="filter" displayName="A message filter"/>
+            </parameters>
+            <results>
+               <c:simple-property name="operationResult" type="integer" description="Number of removed messages."/>
+            </results>
+         </operation>
+         <operation name="listMessages,result=JMSMessage" displayName="List Messages"
+                    description="list all the messages currently in this queue.">
+            <parameters>
+               <c:simple-property required="false" name="filter" displayName="A JMS message filter (can be empty)"/>
+            </parameters>
+            <results>
+               <c:list-property name="result">
+                  <c:map-property required="false" name="element">
+                     <c:simple-property type="string" name="JMSMessageID"/>
+                     <c:simple-property type="long" required="false" name="JMSTimestamp"/>
+                     <c:simple-property type="integer" required="false" name="JMSPriority"/>
+                     <c:simple-property type="long" required="false" name="JMSExpiration"/>
+                     <c:simple-property type="string" required="false" name="JMSDeliveryMode"/>
+                  </c:map-property>
+               </c:list-property>
+            </results>
+         </operation>
+         <operation name="countMessages" displayName="Count Messages"
+                    description="Returns the number of the messages in the queue matching the given filter.">
+            <parameters>
+               <c:simple-property required="false" name="selector" displayName="the selector"/>
+            </parameters>
+            <results>
+               <c:simple-property name="operationResult" type="integer"
+                                  description="Number of the messages in the queue matching the given filter."/>
+            </results>
+         </operation>
+         <operation name="removeMessage" displayName="Remove Message"
+                    description="Remove the message corresponding to the given messageID.">
+            <parameters>
+               <c:simple-property required="true" name="messageID" displayName="The message ID"/>
+            </parameters>
+            <results>
+               <c:simple-property name="operationResult" type="boolean" description="Was the message removed."/>
+            </results>
+         </operation>
+         <operation name="expireMessages" displayName="Expire Messages"
+                    description="Expires the messages corresponding to the given filter.">
+            <parameters>
+               <c:simple-property required="false" name="filter" displayName="A message filter"/>
+            </parameters>
+            <results>
+               <c:simple-property name="operationResult" type="integer" description="Number of expired messages."/>
+            </results>
+         </operation>
+         <operation name="expireMessage" displayName="Expire Message"
+                    description="Expire the message corresponding to the given messageID.">
+            <parameters>
+               <c:simple-property required="true" name="messageID" displayName="The message ID"/>
+            </parameters>
+            <results>
+               <c:simple-property name="operationResult" type="boolean" description="Was the message removed."/>
+            </results>
+         </operation>
+         <operation name="sendMessageToDeadLetterAddress" displayName="Send Message to DLA"
+                    description="Send the message corresponding to the given messageID to this queue's Dead Letter Address.">
+            <parameters>
+               <c:simple-property required="true" name="messageID" displayName="The message ID"/>
+            </parameters>
+            <results>
+               <c:simple-property name="operationResult" type="boolean" description="Was the message sent."/>
+            </results>
+         </operation>
+         <operation name="sendMessagesToDeadLetterAddress" displayName="Send Messages to DLA"
+                    description="Send the messages corresponding to the given filter to this queue's Dead Letter Address.">
+            <parameters>
+               <c:simple-property required="false" name="filterStr" displayName="A message filter"/>
+            </parameters>
+            <results>
+               <c:simple-property name="operationResult" type="integer" description="Number of expired messages."/>
+            </results>
+         </operation>
+         <operation name="changeMessagePriority" displayName="Change Message Priority"
+                    description="Change the priority of the message corresponding to the given messageID.">
+            <parameters>
+               <c:simple-property required="true" name="messageID" displayName="A message ID"/>
+               <c:simple-property required="true" type="integer" name="int:newPriority"
+                                  displayName="the new priority (between 0 and 9)"/>
+            </parameters>
+            <results>
+               <c:simple-property name="operationResult" type="boolean" description="True if priority set."/>
+            </results>
+         </operation>
+         <operation name="changeMessagesPriority" displayName="Change Messages Priority"
+                    description="Change the priority of the messages corresponding to the given filter.">
+            <parameters>
+               <c:simple-property required="false" name="filter" displayName="A message filter"/>
+               <c:simple-property required="true" type="integer" name="int:newPriority"
+                                  displayName="The New Priority (between 0 and 9)"/>
+            </parameters>
+            <results>
+               <c:simple-property name="operationResult" type="integer"
+                                  description="Number of messages reset with priority."/>
+            </results>
+         </operation>
+         <operation name="moveMessage" displayName="Move Message"
+                    description="Move the message corresponding to the given messageID to another queue.">
+            <parameters>
+               <c:simple-property required="true" name="messageID" displayName="A message ID"/>
+               <c:simple-property required="true" name="otherQueueName"
+                                  displayName="Destination Queue"/>
+            </parameters>
+            <results>
+               <c:simple-property name="operationResult" type="boolean" description="True if message moved."/>
+            </results>
+         </operation>
+         <operation name="moveMessages" displayName="Move Messages"
+                    description="Move the messages corresponding to the given filter.">
+            <parameters>
+               <c:simple-property required="false" name="filter" displayName="The Filter"/>
+               <c:simple-property required="true" name="otherQueueName"
+                                  displayName="Destination Queue"/>
+            </parameters>
+            <results>
+               <c:simple-property name="operationResult" type="integer" description="Number of moved messages."/>
+            </results>
+         </operation>
+         <operation name="listMessageCounter" displayName="List Message Counter"
+                    description="List the message counters for this queue. This will show statistics for the queue">
+            <results>
+               <c:simple-property name="operationResult" description="Message Counters."/>
+            </results>
+         </operation>
+         <operation name="resetMessageCounter" displayName="Reset Message Counter"
+                    description="Reset the message counters.">
+         </operation>
+         <operation name="listMessageCounterAsHTML" displayName="List Message Counter in HTML"
+                    description="List the message counters in HTML.">
+            <results>
+               <c:simple-property name="operationResult" description="Message Counters."/>
+            </results>
+         </operation>
+         <operation name="listMessageCounterHistory" displayName="List Message Counter History"
+                    description="List the message counters history.">
+            <results>
+               <c:simple-property name="operationResult" description="Message Counter history."/>
+            </results>
+         </operation>
+         <operation name="listMessageCounterHistoryAsHTML" displayName="List Message Counter History in HTML"
+                    description="List the message counters history in HTML.">
+            <results>
+               <c:simple-property name="operationResult" description="Message Counter history."/>
+            </results>
+         </operation>
+         <operation name="pause" displayName="Pause the Queue" description="Pause the Queue. If the queue is paused no messages can be routed to it or consumed from it.">
+         </operation>
+         <operation name="resume" displayName="restart the Queue" description="Restart the Queue from its paused state.">
+         </operation>
+         &destinationMetrics;
+         <metric property="getMessageCount"
+                 displayName="Message Count"
+                 description="number of messages currently held in this queue awaiting delivery"
+                 dataType="measurement" displayType="summary"/>
+         <metric property="getScheduledCount"
+                 displayName="Scheduled Message Count"
+                 description="number of scheduled messages in this queue awaiting scheduled delivery"
+                 dataType="measurement" displayType="summary"/>
+         <metric property="getConsumerCount"
+                 displayName="Consumer Count"
+                 description="number of consumers currently consuming messages from this queue"
+                 dataType="measurement" displayType="summary"/>
+         <metric property="getDeliveringCount"
+                 displayName="Delivering Count"
+                 description="number of messages that this queue is currently delivering to its consumers that have not been acknowledged"
+                 dataType="measurement" displayType="summary"/>
+         <metric property="getMessagesAdded"
+                 displayName="Messages Added"
+                 description="number of messages added to this queue since it was initially created"
+                 dataType="measurement" displayType="summary"/>
+         <metric property="isPaused"
+                 displayName="paused"
+                 description="Is the queue currently paused"
+                 dataType="trait" displayType="summary"/>
+         <resource-configuration>
+            <c:group name="HornetQCustomProperties" displayName="Destination Options">
+               <c:simple-property name="name" displayName="Name" required="true" readOnly="true">
+                  <c:description>The name of the queue</c:description>
+               </c:simple-property>
+               <c:simple-property name="jndiBindings" displayName="JNDI Name" required="true" readOnly="true">
+                  <c:description>The JNDI name of the queue. This will be used when looking up the queue using the naming server</c:description>
+               </c:simple-property>
+               <c:simple-property name="dla" displayName="Dead Letter Address" required="false">
+                  <c:description>The address to route messages to once the message has been delivered more than the configured number of times. This is specified by 'Max Delivery Attempts'</c:description>
+               </c:simple-property>
+               <c:simple-property name="expiryAddress" displayName="Expiry Address" required="false">
+                  <c:description>The Address to route messages to once they have expired.</c:description>
+               </c:simple-property>
+               <c:simple-property name="maxSize" default="-1" type="integer" displayName="Max Size of Address"
+                                  required="true">
+                  <c:description>The maximum size in bytes of messages that can be delivered to this queue. -1 means no limit, if limit is set then 'Address Full Message Policy' specifies what should happen</c:description>
+               </c:simple-property>
+               <c:simple-property name="pageSize" default="10485760" type="integer" displayName="Page Size"
+                                  required="true">
+                  <c:description>The point at which messages will be paged on an Address</c:description>
+               </c:simple-property>
+               <c:simple-property name="maxDeliveryAttempts" type="integer" default="10"
+                                  displayName="Max Delivery Attempts" required="true">
+                  <c:description>The maximum time to attempt delivery of a message to a consumer, once hit the message is routed to which ever address is specified by 'Dead Letter Address'</c:description>
+               </c:simple-property>
+               <c:simple-property name="redeliveryDelay" type="long" default="0" displayName="Redelivery Delay"
+                                  required="true">
+                  <c:description>The delay (in milli seconds) before re routing a message to this Address after an unsuccessful delivery attempt has occurred. default 0 means no delay</c:description>
+               </c:simple-property>
+               <c:simple-property name="lastValueQueue" default="false" type="boolean" displayName="Last Value Queue"
+                                  required="true">
+                  <c:description>Is this queue a last value queue. A last value queue can only ever contain a single message for each value for the message property '_HQ_LVQ_NAME'.</c:description>
+               </c:simple-property>
+               <c:simple-property name="redistributionDelay" default="-1" type="long" displayName="Redistribution Delay"
+                                  required="true">
+                  <c:description>How long to wait (in milli seconds) before redistributing messages to another node when clustered when a queue has no consumers. Default -1 means do not re distribute.</c:description>
+               </c:simple-property>
+               <c:simple-property name="sendToDLAOnNoRoute" default="false" type="boolean"
+                                  displayName="Send To DLA on no route" required="true">
+                  <c:description>Whether or not messages routed to this address gets sent to DLA when no consumers are available</c:description>
+               </c:simple-property>
+               <c:simple-property name="addressFullMessagePolicy" default="PAGE" type="string"
+                                  displayName="Address Full Message Policy" required="true">
+                  <c:description>The policy to use when this Address is full. PAGE means that the message will be paged, DROP means that messages are just droppoed and BLOCK means that the client will block on send until the queue clears some messages</c:description>
+                  <c:property-options>
+                     <c:option name="PAGE" value="PAGE"/>
+                     <c:option name="DROP" value="DROP"/>
+                     <c:option name="BLOCK" value="BLOCK"/>
+                  </c:property-options>
+               </c:simple-property>
+               <c:list-property name="roles"
+                                displayName="Roles"
+                                description="These are the roles for this queue. The 'name' of the role, 'send' allows a producer to send a message, 'consume' allows a consumer to receive a message.">
+                  <c:map-property name="role"
+                                  displayName="Role Attributes"
+                                  description="These are the attributes that define the role name, and if the role is allowed to send and consume messages on this queue">
+                     <c:simple-property name="name"
+                                        displayName="name"
+                                        description="The name of the role?"
+                                        summary="true"
+                                        required="true"
+                                        type="string"/>
+                     <c:simple-property name="send"
+                                        displayName="send"
+                                        description="Is this role allowed to send messages to this queue?"
+                                        summary="true"
+                                        required="true"
+                                        type="boolean"/>
+                     <c:simple-property name="consume"
+                                        displayName="consume"
+                                        description="Is this role allowed to consume messages from this queue?"
+                                        summary="true"
+                                        required="true"
+                                        type="boolean"/>
+                  </c:map-property>
+
+               </c:list-property>
+            </c:group>
+         </resource-configuration>
+      </service>
+      <service name="JMS Topic"
+               discovery="JMSTopicDiscoveryComponent"
+               class="JMSTopicComponent"
+               createDeletePolicy="both">
+         <operation name="listAllSubscriptions,result=SubscriptionInfo" displayName="List all Subscriptions"
+                    description="Lists all the subscriptions for this topic (both durable and non-durable).">
+            <results>
+               <c:list-property name="result">
+                  <c:map-property required="false" name="element">
+                     <c:simple-property type="string" name="name"/>
+                     <c:simple-property type="string" required="false" name="clientID"/>
+                     <c:simple-property type="string" required="false" name="subName"/>
+                     <c:simple-property type="boolean" required="false" name="durable"/>
+                     <c:simple-property type="integer" name="messageCount"/>
+                     <c:simple-property type="string" name="filter"/>
+                  </c:map-property>
+               </c:list-property>
+            </results>
+         </operation>
+         <operation name="listDurableSubscriptions,result=SubscriptionInfo" displayName="List all Durable Dubscriptions"
+                    description="Lists all the durable subscriptions for this topic.">
+            <results>
+               <c:list-property name="result">
+                  <c:map-property required="false" name="element">
+                     <c:simple-property type="string" name="name"/>
+                     <c:simple-property type="string" required="false" name="clientID"/>
+                     <c:simple-property type="string" required="false" name="subName"/>
+                     <c:simple-property type="boolean" required="false" name="durable"/>
+                     <c:simple-property type="integer" name="messageCount"/>
+                     <c:simple-property type="string" name="filter"/>
+                  </c:map-property>
+               </c:list-property>
+            </results>
+         </operation>
+         <operation name="listNonDurableSubscriptions,result=SubscriptionInfo"
+                    displayName="List all non Durable Subscriptions"
+                    description="Lists all the non-durable subscriptions for this topic.">
+            <results>
+               <c:list-property name="result">
+                  <c:map-property required="false" name="element">
+                     <c:simple-property type="string" name="name"/>
+                     <c:simple-property type="string" required="false" name="clientID"/>
+                     <c:simple-property type="string" required="false" name="subName"/>
+                     <c:simple-property type="boolean" required="false" name="durable"/>
+                     <c:simple-property type="integer" name="messageCount"/>
+                     <c:simple-property type="string" name="filter"/>
+                  </c:map-property>
+               </c:list-property>
+            </results>
+         </operation>
+         <operation name="listMessagesForSubscription,result=JMSMessage" displayName="List all Messages"
+                    description="list all the messages.">
+            <parameters>
+               <c:simple-property required="true" name="queueName"
+                                  displayName="the name of the queue representing a subscription"/>
+            </parameters>
+            <results>
+               <c:list-property name="result">
+                  <c:map-property required="false" name="element">
+                     <c:simple-property type="string" name="JMSMessageID"/>
+                     <c:simple-property type="long" required="false" name="JMSTimestamp"/>
+                     <c:simple-property type="long" required="false" name="JMSExpiration"/>
+                     <c:simple-property type="string" required="false" name="JMSDeliveryMode"/>
+                     <c:simple-property type="string" name="JMSMessageID"/>
+                  </c:map-property>
+               </c:list-property>
+            </results>
+         </operation>
+         <operation name="countMessagesForSubscription" displayName="List Messages for Subscription"
+                    description="Count the number of messages matching the filter for the given subscription.">
+            <parameters>
+               <c:simple-property required="true" name="clientID" displayName="the client ID"/>
+               <c:simple-property required="true" name="subscriptionName"
+                                  displayName="Durable Subscription Name"/>
+               <c:simple-property required="false" name="filter" displayName="JMS Selector (can be empty)"/>
+            </parameters>
+            <results>
+               <c:simple-property name="operationResult" description="Message Subscriptions."/>
+            </results>
+         </operation>
+         <operation name="dropDurableSubscription" displayName="Drop Durable Subscription"
+                    description="Drop a durable subscription.">
+            <parameters>
+               <c:simple-property required="true" name="clientID" displayName="The Client ID"/>
+               <c:simple-property required="true" name="subscriptionName"
+                                  displayName="Durable Subscription Name"/>
+            </parameters>
+         </operation>
+         <operation name="dropAllSubscriptions" displayName="Drop Durable Subscriptions"
+                    description="Drop all durable subscription.">
+         </operation>
+         &destinationMetrics;
+         <metric property="getSubscriptionCount"
+                 displayName="Subscription Count"
+                 description="number of (durable and non-durable) subscribers for this topic"
+                 dataType="measurement" displayType="summary"/>
+         <metric property="getDurableSubscriptionCount"
+                 displayName="Durable Subscription Count"
+                 description="number of durable subscribers for this topic"
+                 dataType="measurement" displayType="summary"/>
+         <metric property="getNonDurableSubscriptionCount"
+                 displayName="Non Durable Subscription Count"
+                 description="number of non-durable subscribers for this topic"
+                 dataType="measurement" displayType="summary"/>
+         <metric property="getMessageCount"
+                 displayName="Message Count"
+                 description="number of messages for all subscribers for this topic"
+                 dataType="measurement" displayType="summary"/>
+         <metric property="getDurableMessageCount"
+                 displayName="Durable Message Count"
+                 description="number of messages for all durable subscribers for this topic"
+                 dataType="measurement" displayType="summary"/>
+         <metric property="getNonDurableMessageCount"
+                 displayName="Non Durable Message Count"
+                 description="number of messages for all non-durable subscribers for this topic"
+                 dataType="measurement" displayType="summary"/>
+         <resource-configuration>
+            <c:group name="HornetQCustomProperties" displayName="Destination Options">
+               <c:simple-property name="name" displayName="Name" required="true" readOnly="true">
+                  <c:description>The Name of the topic to deploy</c:description>
+               </c:simple-property>
+               <c:simple-property name="jndiBindings" displayName="JNDI Name" required="true" readOnly="true">
+                  <c:description>The JNDI name of the queue. This will be used when looking up the queue using the naming server</c:description>
+               </c:simple-property>
+               <c:simple-property name="dla" displayName="Dead Letter Address" required="false">
+                  <c:description>The address to route messages to once the message has been delivered more than the configured number of times. This is specified by 'Max Delivery Attempts'</c:description>
+               </c:simple-property>
+               <c:simple-property name="expiryAddress" displayName="Expiry Address" required="false">
+                  <c:description>The Address to route messages to once they have expired.</c:description>
+               </c:simple-property>
+               <c:simple-property name="maxSize" default="-1" type="integer" displayName="Max Size of Address"
+                                  required="true">
+                  <c:description>The maximum size in bytes of messages that can be delivered to this queue. -1 means no limit, if limit is set then 'Address Full Message Policy' specifies what should happen</c:description>
+               </c:simple-property>
+               <c:simple-property name="pageSize" default="10485760" type="integer" displayName="Page Size"
+                                  required="true">
+                  <c:description>The point at which messages will be paged on an Address</c:description>
+               </c:simple-property>
+               <c:simple-property name="maxDeliveryAttempts" type="integer" default="10"
+                                  displayName="Max Delivery Attempts" required="true">
+                  <c:description>The maximum time to attempt delivery of a message to a consumer, once hit the message is routed to which ever address is specified by 'Dead Letter Address'</c:description>
+               </c:simple-property>
+               <c:simple-property name="redeliveryDelay" type="long" default="0" displayName="Redelivery Delay"
+                                  required="true">
+                  <c:description>The delay (in milli seconds) before re routing a message to this Address after an unsuccessful delivery attempt has occurred. default 0 means no delay</c:description>
+               </c:simple-property>
+               <c:simple-property name="lastValueQueue" default="false" type="boolean" displayName="Last Value Queue"
+                                  required="true">
+                  <c:description>Is this queue a last value queue. A last value queue can only ever contain a single message for each value for the message property '_HQ_LVQ_NAME'.</c:description>
+               </c:simple-property>
+               <c:simple-property name="redistributionDelay" default="-1" type="long" displayName="Redistribution Delay"
+                                  required="true">
+                  <c:description>How long to wait (in milli seconds) before redistributing messages to another node when clustered when a queue has no consumers. Default -1 means do not re distribute.</c:description>
+               </c:simple-property>
+               <c:simple-property name="sendToDLAOnNoRoute" default="false" type="boolean"
+                                  displayName="Send To DLA on no route" required="true">
+                  <c:description>Whether or not messages routed to this address gets sent to DLA when no consumers are available</c:description>
+               </c:simple-property>
+               <c:simple-property name="addressFullMessagePolicy" default="PAGE" type="string"
+                                  displayName="Address Full Message Policy" required="true">
+                  <c:description>The policy to use when this Address is full. PAGE means that the message will be paged, DROP means that messages are just droppoed and BLOCK means that the client will block on send until the queue clears some messages</c:description>
+                  <c:property-options>
+                     <c:option name="PAGE" value="PAGE"/>
+                     <c:option name="DROP" value="DROP"/>
+                     <c:option name="BLOCK" value="BLOCK"/>
+                  </c:property-options>
+               </c:simple-property>
+               <c:list-property name="roles"
+                                displayName="Roles"
+                                description="These are the role defined for this topic. The 'name' of the role, 'send' allows a producer to send a message, 'consume' allows a consumer or subscriber to receive a message. The create/delete (non) durable subscriber specifies whether the queue representing the subscription can be created or deleted">
+                  <c:map-property name="role"
+                                  displayName="Role Attributes"
+                                  description="These are the attributes that define a role for this topic.">
+                     <c:simple-property name="name"
+                                        displayName="name"
+                                        description="The name of the role"
+                                        summary="true"
+                                        required="true"
+                                        type="string"/>
+                     <c:simple-property name="send"
+                                        displayName="send"
+                                        description="Is this role allowed to send messages to this topic?"
+                                        summary="true"
+                                        required="true"
+                                        type="boolean"/>
+                     <c:simple-property name="consume"
+                                        displayName="consume"
+                                        description="Is this role allowed to consume messages from this topic?"
+                                        summary="true"
+                                        required="true"
+                                        type="boolean"/>
+                     <c:simple-property name="createNonDurableQueue"
+                                        displayName="create subscriber"
+                                        description="Is this role allowed to create non durable subscribers for this topic?"
+                                        summary="true"
+                                        required="true"
+                                        type="boolean"/>
+                     <c:simple-property name="deleteNonDurableQueue"
+                                        displayName="delete subscriber"
+                                        description="Is this role allowed to delete non durable subscribers for this topic?"
+                                        summary="true"
+                                        required="true"
+                                        type="boolean"/>
+                     <c:simple-property name="createDurableQueue"
+                                        displayName="create durable subscriber"
+                                        description="Is this role allowed to create durable subscribers for this topic?"
+                                        summary="true"
+                                        required="true"
+                                        type="boolean"/>
+                     <c:simple-property name="deleteDurableQueue"
+                                        displayName="delete durable subscriber"
+                                        description="Is this role allowed to delete durable subscribers for this topic?"
+                                        summary="true"
+                                        required="true"
+                                        type="boolean"/>
+                  </c:map-property>
+
+               </c:list-property>
+            </c:group>
+         </resource-configuration>
+      </service>
+      <service name="JMS Connection Factory"
+               discovery="JMSConnectionFactoryDiscoveryComponent"
+               class="JMSConnectionFactoryComponent"
+               createDeletePolicy="both">
+         <metric property="getName"
+                 displayName="Name"
+                 description="name of this connection factory"
+                 dataType="trait" displayType="summary"/>
+         <metric property="getBindings"
+                 displayName="JNDI Bindings"
+                 description="JNDI Bindings of this connection factory"
+                 dataType="trait" displayType="summary"/>
+         <resource-configuration>
+            <c:group name="HornetQCustomProperties" displayName="Connection Factory Options">
+               <c:simple-property name="name" displayName="Connection Factory Name" required="true" readOnly="true">
+                  <c:description>Name of the connection factory to deploy</c:description>
+               </c:simple-property>
+               <c:simple-property name="Bindings" displayName="Connection Factory JNDI Bindings" required="true" readOnly="true">
+                  <c:description>JNDI Bindings of the connection factory to deploy</c:description>
+               </c:simple-property>
+               <c:simple-property name="liveTransportClassNames"
+                  default="org.hornetq.integration.transports.netty.NettyConnectorFactory"
+                  readOnly="true" required="false"
+                  displayName="Connectors to live servers">
+                  <c:description>comma-separated list of class names to connect to live servers</c:description>
+               </c:simple-property>
+               <c:simple-property name="liveTransportParams"
+                  default="{host=localhost,port=5445}"
+                  readOnly="true" required="false"
+                  displayName="Parameters for connectors to live servers">
+                  <c:description>comma-separated list of key=value parameters for the live connectors ( enclosed between { })</c:description>
+               </c:simple-property>
+               <c:simple-property name="backupTransportClassNames"
+                  required="false" readOnly="true"
+                  displayName="Connectors to backup servers">
+                  <c:description>comma-separated list of class names to connect to backup servers</c:description>
+               </c:simple-property>
+               <c:simple-property name="backupTransportParams"
+                  required="false" readOnly="true"
+                  displayName="Parameters for connectors to backup servers">
+                  <c:description>comma-separated list of key=value parameters for the backup connectors ( enclosed between { })</c:description>
+               </c:simple-property>
+               <c:simple-property name="DiscoveryAddress"
+                  required="false"
+                  readOnly="true"
+                  displayName="Discovery Address">
+                  <c:description>the address to listen to discover which connectors this connection factory can use</c:description>
+               </c:simple-property>
+               <c:simple-property name="DiscoveryPort"
+                  readOnly="true"
+                  default="0" type="integer"
+                  displayName="Discovery Port">
+                  <c:description>port to listen to discover which connectors this connection factory can use</c:description>
+               </c:simple-property>
+               <c:simple-property name="DiscoveryRefreshTimeout"
+                  default="10000" type="long"
+                   displayName="Discovery Refresh Timeout">
+                   <c:description>refresh timeout for discovered HornetQ servers</c:description>
+                </c:simple-property>
+               <c:simple-property name="DiscoveryInitialWaitTimeout"
+                   default="2000" type="long"
+                   displayName="Discovery Initial Wait Timeout">
+                   <c:description>initial wait timeout if this connection factory is configured to use discovery </c:description>
+                </c:simple-property>
+               <c:simple-property name="ClientID"
+                  required="false"
+                  displayName="Client ID">
+                  <c:description>Client ID for connections created by this connection factory</c:description>
+               </c:simple-property>
+               <c:simple-property name="DupsOKBatchSize"
+                  default="1048576" type="integer"
+                  displayName="Dups OK Batch Size">
+                  <c:description>batch size (in bytes) between acknowledgements when using DUPS_OK_ACKNOWLEDGE mode</c:description>
+               </c:simple-property>
+               <c:simple-property name="TransactionBatchSize"
+                   default="1048576" type="integer"
+                   displayName="Transaction Batch Size">
+                   <c:description>batch size (in bytes) between acknowledgements when using a transacted session</c:description>
+                </c:simple-property>
+               <c:simple-property name="ClientFailureCheckPeriod"
+                  default="30000" type="long"
+                  displayName="Client Failure Check Period">
+                  <c:description>period used to check if a client has failed to receive pings from the serve</c:description>
+               </c:simple-property>
+               <c:simple-property name="ConnectionTTL"
+                   default="60000" type="long"
+                   displayName="Connection TTL">
+                   <c:description>connection time-to-live (in milliseconds)</c:description>
+                </c:simple-property>
+               <c:simple-property name="CallTimeout"
+                  default="30000" type="long"
+                  displayName="Call Timeout">
+                  <c:description>blocking calls timeout (in milliseconds)</c:description>
+               </c:simple-property>
+               <c:simple-property name="ConsumerWindowSize"
+                  default="1048576" type="integer"
+                  displayName="Consumer Window Size">
+                  <c:description>window size (in bytes) used for consumer flow control</c:description>
+               </c:simple-property>
+               <c:simple-property name="ConsumerMaxRate"
+                  default="-1" type="integer"
+                  displayName="Consumer Max Rate">
+                  <c:description>maximum rate of message consumption (in messages per seconds)</c:description>
+               </c:simple-property>
+               <c:simple-property name="ConfirmationWindowSize"
+                  default="-1" type="integer"
+                  displayName="Confirmation Window Size">
+                  <c:description>size (in bytes) for the confirmation window of clients using this connection factory</c:description>
+               </c:simple-property>
+               <c:simple-property name="ProducerMaxRate"
+                  default="-1" type="integer"
+                  displayName="Producer Max Rate">
+                  <c:description>maximum rate of message production (in messages per seconds)</c:description>
+               </c:simple-property>
+               <c:simple-property name="ProducerWindowSize"
+                  default="65536" type="integer"
+                  displayName="Producer Window Size">
+                  <c:description>window size (in bytes) used for producer flow control</c:description>
+               </c:simple-property>
+               <c:simple-property name="CacheLargeMessagesClient"
+                  default="false" type="boolean"
+                  displayName="Cache Large Messages Client">
+                  <c:description>Whether consumers created through this factory will cache large messages in temporary files</c:description>
+               </c:simple-property>
+               <c:simple-property name="MinLargeMessageSize"
+                  default="102400" type="integer"
+                  displayName="Minimum Large Message Size">
+                  <c:description>message size threshold (in bytes) to treat messages as large messages</c:description>
+               </c:simple-property>
+               <c:simple-property name="BlockOnNonDurableSend"
+                  default="false" type="boolean"
+                  displayName="Block On Non Durable Send">
+                  <c:description>whether producers will block while sending non-durable messages or do it asynchronously</c:description>
+               </c:simple-property>
+               <c:simple-property name="BlockOnAcknowledge"
+                  default="false" type="boolean"
+                  displayName="Block On Acknowledge">
+                  <c:description>whether consumers will block while sending message acknowledgements or do it asynchronously</c:description>
+               </c:simple-property>
+               <c:simple-property name="BlockOnDurableSend"
+                  default="true" type="boolean"
+                  displayName="Block On Durable Send">
+                  <c:description>whether producers will block while sending persistent messages or do it asynchronously</c:description>
+               </c:simple-property>
+               <c:simple-property name="AutoGroup"
+                  default="false" type="boolean"
+                  displayName="Auto Group">
+                  <c:description> whether producers will automatically assign a group ID to their messages</c:description>
+               </c:simple-property>
+               <c:simple-property name="PreAcknowledge"
+                  default="false" type="boolean"
+                  displayName="Pre Acknowledge">
+                  <c:description>whether messages will pre-acknowledged on the server before they are sent to the consumers or not</c:description>
+               </c:simple-property>
+               <c:simple-property name="RetryInterval"
+                  default="2000" type="long"
+                  displayName="Retry Interval">
+                  <c:description>interval (in milliseconds) to retry connections created by this factory after failure</c:description>
+               </c:simple-property>
+               <c:simple-property name="MaxRetryInterval"
+                  default="2000" type="long"
+                  displayName="Maximum Retry Interval">
+                  <c:description>maximum retry interval (in milliseconds)</c:description>
+               </c:simple-property>
+               <c:simple-property name="RetryIntervalMultiplier"
+                  default="1.0" type="double"
+                  displayName="Retry Interval Multiplier">
+                  <c:description>multiplier to apply to successive retry intervals</c:description>
+               </c:simple-property>
+               <c:simple-property name="ReconnectAttempts"
+                  default="0" type="integer"
+                  displayName="Reconnect Attempts">
+                  <c:description>maximum number of attempts to retry connection in case of failure</c:description>
+               </c:simple-property>
+               <c:simple-property name="FailoverOnServerShutdown"
+                  default="false" type="boolean"
+                  displayName="Failover On Server Shutdown">
+                  <c:description>whether connections created by this factory must failover in case the server they are connected to has normally shut down</c:description>
+               </c:simple-property>
+               <c:simple-property name="ScheduledThreadPoolMaxSize"
+                  default="5" type="integer"
+                  displayName="Scheduled Thread Pool Max Size">
+                  <c:description>maximum size of the scheduled thread pool</c:description>
+               </c:simple-property>
+               <c:simple-property name="ThreadPoolMaxSize"
+                  default="-1" type="integer"
+                  displayName="Thread Pool Max Size">
+                  <c:description>maximum size of the thread pool</c:description>
+               </c:simple-property>
+               <c:simple-property name="GroupID"
+                  default="false" type="boolean"
+                  required="false"
+                  displayName="Group ID">
+                  <c:description>group ID that will be eventually set on each message</c:description>
+               </c:simple-property>
+               <c:simple-property name="InitialMessagePacketSize" 
+                  default="1500" type="integer"
+                  displayName="Initial Message Packet Size">
+                  <c:description>initial size (in bytes) of messages created through this factory</c:description>
+               </c:simple-property>
+               <c:simple-property name="UseGlobalPools"
+                  default="true" type="boolean"
+                  displayName="Use Global Pools">
+                  <c:description>whether this factory will use global thread pools (shared among all the factories in the same JVM) or its own pools</c:description>
+               </c:simple-property>
+               <c:simple-property name="ConnectionLoadBalancingPolicyClassName"
+                  default="org.hornetq.api.core.client.loadbalance.RoundRobinConnectionLoadBalancingPolicy"
+                  displayName="Connection Load Balancing Policy Class Name">
+                  <c:description>class name of the connection load balancing policy</c:description>
+               </c:simple-property>
+            </c:group>
+         </resource-configuration>
+      </service>
+   </service>
+</plugin>
