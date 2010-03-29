@@ -7,7 +7,7 @@
                  displayName="Name"
                  description="name of this destination"
                  dataType="trait" displayType="summary"/>
-                 <metric property="getJNDIBinding"
+                 <metric property="getJNDIBindings"
                  displayName="JNDI Binding"
                  description="JNDI Binding of this destination"
                  dataType="trait" displayType="summary"/>
@@ -242,7 +242,7 @@
                   <c:description>The name of the queue</c:description>
                </c:simple-property>
                <c:simple-property name="jndiBindings" displayName="JNDI Name" required="true" readOnly="true">
-                  <c:description>The JNDI name of the queue. This will be used when looking up the queue using the naming server</c:description>
+                  <c:description>comma-separated list of JNDI bindings (use '&amp;comma;' if u need to use commas in your jndi name)</c:description>
                </c:simple-property>
                <c:simple-property name="dla" displayName="Dead Letter Address" required="false">
                   <c:description>The address to route messages to once the message has been delivered more than the configured number of times. This is specified by 'Max Delivery Attempts'</c:description>
@@ -439,7 +439,7 @@
                   <c:description>The Name of the topic to deploy</c:description>
                </c:simple-property>
                <c:simple-property name="jndiBindings" displayName="JNDI Name" required="true" readOnly="true">
-                  <c:description>The JNDI name of the queue. This will be used when looking up the queue using the naming server</c:description>
+                  <c:description>comma-separated list of JNDI bindings (use '&amp;comma;' if u need to use commas in your jndi name)</c:description>
                </c:simple-property>
                <c:simple-property name="dla" displayName="Dead Letter Address" required="false">
                   <c:description>The address to route messages to once the message has been delivered more than the configured number of times. This is specified by 'Max Delivery Attempts'</c:description>
@@ -546,7 +546,7 @@
                  displayName="Name"
                  description="name of this connection factory"
                  dataType="trait" displayType="summary"/>
-         <metric property="getBindings"
+         <metric property="getJNDIBindings"
                  displayName="JNDI Bindings"
                  description="JNDI Bindings of this connection factory"
                  dataType="trait" displayType="summary"/>
@@ -555,8 +555,8 @@
                <c:simple-property name="name" displayName="Connection Factory Name" required="true" readOnly="true">
                   <c:description>Name of the connection factory to deploy</c:description>
                </c:simple-property>
-               <c:simple-property name="Bindings" displayName="Connection Factory JNDI Bindings" required="true" readOnly="true">
-                  <c:description>JNDI Bindings of the connection factory to deploy</c:description>
+               <c:simple-property name="Bindings" displayName="JNDI Bindings" required="true" readOnly="true">
+                  <c:description>comma-separated list of JNDI bindings (use '&amp;comma;' if u need to use commas in your jndi name)</c:description>
                </c:simple-property>
                <c:simple-property name="liveTransportClassNames"
                   default="org.hornetq.integration.transports.netty.NettyConnectorFactory"
