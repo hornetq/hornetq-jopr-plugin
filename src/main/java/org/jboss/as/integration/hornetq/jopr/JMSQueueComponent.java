@@ -181,7 +181,7 @@ public class JMSQueueComponent extends JMSResourceComponent implements ResourceC
 
    private void createRoles(ConfigurationUpdateReport configurationUpdateReport, String name, StringBuffer sendRoles, StringBuffer consumeRoles)
    {
-      PropertyList propertyList = (PropertyList) configurationUpdateReport.getConfiguration().get("securityConfig");
+      PropertyList propertyList = (PropertyList) configurationUpdateReport.getConfiguration().get("roles");
       if(propertyList == null)
       {
          return;

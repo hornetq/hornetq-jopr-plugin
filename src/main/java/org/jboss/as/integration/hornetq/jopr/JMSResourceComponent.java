@@ -127,13 +127,13 @@ public abstract class JMSResourceComponent implements ResourceComponent, Measure
             }
             else if(mv instanceof CollectionValueSupport)
             {
-               PropertyList property = new PropertyList("securityConfig");
+               PropertyList property = new PropertyList("roles");
                CollectionValueSupport valueSupport = (CollectionValueSupport) mv;
                MetaValue[] msgs =  valueSupport.getElements();
                for (MetaValue mv2 : msgs)
                {
                   CompositeValueSupport msg = (CompositeValueSupport) mv2;
-                  org.rhq.core.domain.configuration.PropertyMap p1 = new org.rhq.core.domain.configuration.PropertyMap("element");
+                  org.rhq.core.domain.configuration.PropertyMap p1 = new org.rhq.core.domain.configuration.PropertyMap("role");
                   property.add(p1);
                   ImmutableCompositeMetaType metaType = (ImmutableCompositeMetaType) msg.getMetaType();
                   Set<String> keys = metaType.keySet();

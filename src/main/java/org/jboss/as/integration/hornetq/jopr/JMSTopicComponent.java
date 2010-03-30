@@ -167,7 +167,7 @@ public class JMSTopicComponent extends JMSResourceComponent
 
    private void createRoles(ConfigurationUpdateReport configurationUpdateReport, String name, StringBuffer sendRoles, StringBuffer consumeRoles, StringBuffer createNonDurableRoles, StringBuffer deleteNonDurableRoles, StringBuffer createDurableRoles, StringBuffer deleteDurableRoles)
    {
-      PropertyList propertyList = (PropertyList) configurationUpdateReport.getConfiguration().get("securityConfig");
+      PropertyList propertyList = (PropertyList) configurationUpdateReport.getConfiguration().get("roles");
       List<Property> roles = propertyList.getList();
       for (Property role : roles)
       {
