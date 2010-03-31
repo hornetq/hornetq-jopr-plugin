@@ -89,6 +89,10 @@
              </c:list-property>
          </results>
       </operation>
+      <operation name="enableMessageCounters" displayName="Enable Message Counters" description="Enable Message Counters."/>
+      <operation name="disableMessageCounters" displayName="Disable Message Counters" description="Disable Message Counters."/>
+      <operation name="resetAllMessageCounters" displayName="Reset All MessageCounters" description="Reset All MessageCounters."/>
+      <operation name="resetAllMessageCounterHistories" displayName="Reset All Message Counter Histories" description="Reset All Message Counter Histories."/>
       <metric property="version"
                  displayName="HornetQ Version"
                  description="The HornetQ version"
