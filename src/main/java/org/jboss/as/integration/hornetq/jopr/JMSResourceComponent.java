@@ -57,7 +57,7 @@ import java.util.Set;
 public abstract class JMSResourceComponent implements ResourceComponent, MeasurementFacet, OperationFacet, ConfigurationFacet, JMSComponent, DeleteResourceFacet
 {
    protected ResourceContext resourceContext;
-   private JMSComponent jmsComponent;
+   protected JMSComponent jmsComponent;
 
    public AvailabilityType getAvailability()
    {
@@ -293,6 +293,23 @@ public abstract class JMSResourceComponent implements ResourceComponent, Measure
       {
          SimpleValueSupport valueSupport = (SimpleValueSupport) val;
          return new OperationResult(valueSupport.getValue().toString());
+      }
+      else if(type.equalsIgnoreCase("String[]"))
+      {
+         OperationResult operationResult = new OperationResult();
+         Configuration c = operationResult.getComplexResults();
+         PropertyList property = new PropertyList("result");
+         ArrayValueSupport support = (ArrayValueSupport) val;
+         for(int i = 0; i < support.getLength(); i++)
+         {
+            org.rhq.core.domain.configuration.PropertyMap p1 = new org.rhq.core.domain.configuration.PropertyMap("element");
+            property.add(p1);
+            SimpleValueSupport svs = (SimpleValueSupport) ((ArrayValueSupport) val).getValue(i);
+            if(svs != null)
+                  p1.put(new PropertySimple("value",svs.getValue()));
+         }
+         c.put(property);
+         return operationResult;
       }
       else if(type.equalsIgnoreCase("JMSMessage") || type.equalsIgnoreCase("SubscriptionInfo"))
       {

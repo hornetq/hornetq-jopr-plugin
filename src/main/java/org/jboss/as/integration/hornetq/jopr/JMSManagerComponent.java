@@ -36,8 +36,8 @@ import org.rhq.core.domain.measurement.MeasurementDataTrait;
 import org.rhq.core.domain.measurement.MeasurementReport;
 import org.rhq.core.domain.measurement.MeasurementScheduleRequest;
 import org.rhq.core.domain.resource.CreateResourceStatus;
+import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
 import org.rhq.core.pluginapi.inventory.*;
-import org.rhq.core.pluginapi.measurement.MeasurementFacet;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -49,10 +49,8 @@ import java.util.Set;
  * @author <a href="mailto:andy.taylor@jboss.org">Andy Taylor</a>
  *         Created 11-Mar-2010
  */
-public class JMSManagerComponent implements ResourceComponent, CreateChildResourceFacet, MeasurementFacet, JMSComponent
+public class JMSManagerComponent extends JMSResourceComponent implements ResourceComponent, CreateChildResourceFacet, JMSComponent
 {
-   private ResourceContext resourceContext;
-
    public void getValues(MeasurementReport measurementReport, Set<MeasurementScheduleRequest> measurementScheduleRequests) throws Exception
    {
 
@@ -172,6 +170,19 @@ public class JMSManagerComponent implements ResourceComponent, CreateChildResour
       return createResourceReport;
    }
 
+
+   public void start(ResourceContext resourceContext) throws InvalidPluginConfigurationException, Exception
+   {
+      this.resourceContext = resourceContext;
+
+      jmsComponent = this;
+   }
+
+   public void stop()
+   {
+      this.resourceContext = null;
+   }
+
    private void createConnectionFactory(CreateResourceReport createResourceReport, ManagementView managementView, String name,String liveTransportClassNames, String liveTransportParams, String backupTransportClassNames, String backupTransportParams,  String bindings, String discoveryAddress, int discoveryPort, long discoveryRefreshTimeout, String clientId, int dupsOkBatchSize, int transactionBatchSize, long clientFailureCheckPeriod, long connectionTTL, long callTimeout, int consumerWindowSize, int confirmationWindowSize, int producerMaxRate, int producerWindowSize, boolean cacheLargeMessageClient, int minLargeMessageSize, boolean blockOnNonDurableSend, boolean blockOnAcknowledge, boolean blockOnDurableSend, boolean autoGroup, boolean preAcknowledge, long maxRetryInterval, double retryIntervalMultiplier, int reconnectAttempts, boolean failoverOnShutdown, int scheduledThreadPoolMaxSize, int threadPoolMaxSize, String groupId, int initialMessagePacketSize, boolean useGlobalPools, long retryInterval, String connectionLoadBalancingPolicyClassName)
          throws Exception
    {
@@ -284,17 +295,6 @@ public class JMSManagerComponent implements ResourceComponent, CreateChildResour
       createResourceReport.setResourceName("jms.topic." + name);
    }
 
-
-   public void start(ResourceContext resourceContext) throws InvalidPluginConfigurationException, Exception
-   {
-      this.resourceContext = resourceContext;
-   }
-
-   public void stop()
-   {
-      //To change body of implemented methods use File | Settings | File Templates.
-   }
-
    public AvailabilityType getAvailability()
    {
       return AvailabilityType.UP;
@@ -307,6 +307,59 @@ public class JMSManagerComponent implements ResourceComponent, CreateChildResour
       Object conn = m.invoke(component);
       m = conn.getClass().getMethod("getManagementView");
       return (ManagementView) m.invoke(conn);
+   }
+
+   @Override
+   protected String getInvokeOperationSubscriptionMessage()
+   {
+      return null;
+   }
+
+   @Override
+   protected String getInvokeOperationJMSMessage()
+   {
+      return null;
+   }
+
+   @Override
+   protected String getInvokeOperation()
+   {
+      return "invokeManagerOperation"; 
+   }
+
+   @Override
+   String getComponentName()
+   {
+      return JMSConstants.Manager.COMPONENT_NAME;
+   }
+
+   @Override
+   ComponentType getComponentType()
+   {
+      return JMSConstants.Manager.COMPONENT_TYPE;
+   }
+
+   @Override
+   String getConfigurationOperationName()
+   {
+      return null;
+   }
+
+   @Override
+   String getMeasurementsOperationName()
+   {
+      return null;
+   }
+
+   @Override
+   String getDeleteOperationName()
+   {
+      return null;
+   }
+
+   public void updateResourceConfiguration(ConfigurationUpdateReport configurationUpdateReport)
+   {
+      
    }
 
    private void createRoles(CreateResourceReport configurationUpdateReport, String name, StringBuffer sendRoles, StringBuffer consumeRoles)

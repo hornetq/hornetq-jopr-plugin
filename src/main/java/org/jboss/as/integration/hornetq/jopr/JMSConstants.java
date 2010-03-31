@@ -40,4 +40,10 @@ public class JMSConstants
 
       public static final ComponentType COMPONENT_TYPE = new ComponentType("JMSDestinationManage", "TopicManage");
    }
+
+   interface Manager
+   {
+      public static final String COMPONENT_NAME = "JMSServerMO";
+      public static final ComponentType COMPONENT_TYPE = new ComponentType("JMSManage", "ServerManage");
+   }
 }
