@@ -21,9 +21,12 @@
 */
 package org.jboss.as.integration.hornetq.jopr;
 
+import org.jboss.as.integration.hornetq.jopr.util.ManagementSupport;
 import org.jboss.deployers.spi.management.ManagementView;
 import org.jboss.managed.api.ComponentType;
 import org.jboss.managed.api.ManagedComponent;
+import org.jboss.managed.api.ManagedOperation;
+import org.jboss.metatype.api.values.SimpleValueSupport;
 import org.rhq.core.pluginapi.inventory.*;
 
 import java.lang.reflect.Method;
@@ -46,8 +49,8 @@ public class JMSManagerDiscoveryComponent implements ResourceDiscoveryComponent
                   ctx.getResourceType(), // Resource type
                   ctx.getResourceType().getName(), // Resource key
                   ctx.getResourceType().getName(), // Resource name
-                  null, // Resource version
-                  ctx.getResourceType().getDescription(), // Description
+                  getVersion(ctx), // HornetQ Resource version
+                  "The HornetQ JMS provider", // Description
                   ctx.getDefaultPluginConfiguration(), // Plugin config
                   null // Process info from a process scan
          );
@@ -63,5 +66,12 @@ public class JMSManagerDiscoveryComponent implements ResourceDiscoveryComponent
       Object conn = m.invoke(component);
       m = conn.getClass().getMethod("getManagementView");
       return (ManagementView) m.invoke(conn);
+   }
+   private String getVersion(ResourceDiscoveryContext ctx) throws Exception
+   {
+      ManagementView managementView = getProfileService(ctx);
+      ManagedOperation operation = ManagementSupport.getOperation(managementView, "JMSServerMO", "getVersion", new ComponentType("JMSManage", "ServerManage"));
+      SimpleValueSupport support = (SimpleValueSupport) operation.invoke();
+      return support.getValue().toString();
    }
 }

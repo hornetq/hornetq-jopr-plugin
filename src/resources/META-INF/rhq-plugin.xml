@@ -93,9 +93,9 @@
       <operation name="disableMessageCounters" displayName="Disable Message Counters" description="Disable Message Counters."/>
       <operation name="resetAllMessageCounters" displayName="Reset All MessageCounters" description="Reset All MessageCounters."/>
       <operation name="resetAllMessageCounterHistories" displayName="Reset All Message Counter Histories" description="Reset All Message Counter Histories."/>
-      <metric property="version"
-                 displayName="HornetQ Version"
-                 description="The HornetQ version"
+      <metric property="provider"
+                 displayName="Provider Name"
+                 description="The JMS Provider"
                  dataType="trait" displayType="summary"/>
       <metric property="started"
                  displayName="Is Started"
@@ -169,22 +169,22 @@
                <c:simple-property name="operationResult" type="boolean" description="Was the message removed."/>
             </results>
          </operation>
-         <operation name="sendMessageToDeadLetterAddress" displayName="Send Message to DLA"
+         <operation name="sendMessageToDeadLetterAddress" displayName="Send Message to dead letter address"
                     description="Send the message corresponding to the given messageID to this queue's Dead Letter Address.">
             <parameters>
-               <c:simple-property required="true" name="messageID" displayName="The message ID" description="The message ID of the message to send to the DLA"/>
+               <c:simple-property required="true" name="messageID" displayName="The message ID" description="The message ID of the message to send to the dead letter address"/>
             </parameters>
             <results>
                <c:simple-property name="operationResult" type="boolean" description="Was the message sent."/>
             </results>
          </operation>
-         <operation name="sendMessagesToDeadLetterAddress" displayName="Send Messages to DLA"
+         <operation name="sendMessagesToDeadLetterAddress" displayName="Send Messages to dead letter address"
                     description="Send the messages corresponding to the given filter to this queue's Dead Letter Address.">
             <parameters>
-               <c:simple-property required="false" name="selector"  displayName="A JMS message selector" description="A selector string to match, the default, no selector, means send all messages to DLA."/>
+               <c:simple-property required="false" name="selector"  displayName="A JMS message selector" description="A selector string to match, the default, no selector, means send all messages to dead letter address."/>
             </parameters>
             <results>
-               <c:simple-property name="operationResult" type="integer" description="Number of messages sent to the DLA."/>
+               <c:simple-property name="operationResult" type="integer" description="Number of messages sent to the dead letter address."/>
             </results>
          </operation>
          <operation name="changeMessagePriority" displayName="Change Message Priority"
@@ -261,7 +261,7 @@
          </operation>
          <operation name="pause" displayName="Pause the Queue" description="Pause the Queue. If the queue is paused no messages can be routed to it or consumed from it.">
          </operation>
-         <operation name="resume" displayName="restart the Queue" description="Restart the Queue from its paused state.">
+         <operation name="resume" displayName="Restart the Queue" description="Restart the Queue from its paused state.">
          </operation>
          &destinationMetrics;
          <metric property="getMessageCount"
@@ -285,7 +285,7 @@
                  description="number of messages added to this queue since it was initially created"
                  dataType="measurement" displayType="summary"/>
          <metric property="isPaused"
-                 displayName="paused"
+                 displayName="Paused"
                  description="Is the queue currently paused"
                  dataType="trait" displayType="summary"/>
          <resource-configuration>
@@ -327,8 +327,8 @@
                   <c:description>How long to wait (in milli seconds) before redistributing messages to another node when clustered when a queue has no consumers. Default -1 means do not re distribute.</c:description>
                </c:simple-property>
                <c:simple-property name="sendToDLAOnNoRoute" default="false" type="boolean"
-                                  displayName="Send To DLA on no route" required="true">
-                  <c:description>Whether or not messages routed to this address gets sent to DLA when no consumers are available</c:description>
+                                  displayName="Send To dead letter address on no route" required="true">
+                  <c:description>Whether or not messages routed to this address gets sent to dead letter address when no consumers are available</c:description>
                </c:simple-property>
                <c:simple-property name="addressFullMessagePolicy" default="PAGE" type="string"
                                   displayName="Address Full Message Policy" required="true">
@@ -494,7 +494,7 @@
                   <c:description>comma-separated list of JNDI bindings (use '&amp;comma;' if u need to use commas in your jndi name)</c:description>
                </c:simple-property>
                <c:simple-property name="dla" displayName="Dead Letter Address" required="false">
-                  <c:description>The address to route messages to once the message has been delivered more than the configured number of times. This is specified by 'Max Delivery Attempts'. The default is no DLA</c:description>
+                  <c:description>The address to route messages to once the message has been delivered more than the configured number of times. This is specified by 'Max Delivery Attempts'. The default is no dead letter address</c:description>
                </c:simple-property>
                <c:simple-property name="expiryAddress" displayName="Expiry Address" required="false">
                   <c:description>The Address to route messages to once they have expired. The default is no expiry address</c:description>
@@ -524,8 +524,8 @@
                   <c:description>How long to wait (in milli seconds) before redistributing messages to another node when clustered when a queue has no consumers. Default -1 means do not re distribute.</c:description>
                </c:simple-property>
                <c:simple-property name="sendToDLAOnNoRoute" default="false" type="boolean"
-                                  displayName="Send To DLA on no route" required="true">
-                  <c:description>Whether or not messages routed to this address gets sent to DLA when no consumers are available</c:description>
+                                  displayName="Send To dead letter address on no route" required="true">
+                  <c:description>Whether or not messages routed to this address gets sent to dead letter address when no consumers are available</c:description>
                </c:simple-property>
                <c:simple-property name="addressFullMessagePolicy" default="PAGE" type="string"
                                   displayName="Address Full Message Policy" required="true">
@@ -642,7 +642,7 @@
                   readOnly="true"
                   default="0" type="integer"
                   displayName="Discovery Port">
-                  <c:description>port to listen on to discover which connectors this connection factory can use</c:description>
+                  <c:description>port to listen on to discover which connectors this connection factory can use. Should be used when 'Discovery Address' is set and greater 0</c:description>
                </c:simple-property>
                <c:simple-property name="DiscoveryRefreshTimeout"
                   default="10000" type="long"

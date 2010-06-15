@@ -56,18 +56,16 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
 
       for (MeasurementScheduleRequest measurementScheduleRequest : measurementScheduleRequests)
       {
-
-         if("version".equalsIgnoreCase(measurementScheduleRequest.getName()))
+         if("provider".equalsIgnoreCase(measurementScheduleRequest.getName()))
          {
-            ManagementView managementView = getProfileService();
-            ManagedOperation operation = ManagementSupport.getOperation(managementView, "JMSServerMO", "getVersion", new ComponentType("JMSManage", "ServerManage"));
-            SimpleValueSupport support = (SimpleValueSupport) operation.invoke();measurementReport.addData(new MeasurementDataTrait(measurementScheduleRequest, support.getValue().toString()));
+            measurementReport.addData(new MeasurementDataTrait(measurementScheduleRequest, "HornetQ"));
          }
          else if("started".equalsIgnoreCase(measurementScheduleRequest.getName()))
          {
             ManagementView managementView = getProfileService();
             ManagedOperation operation = ManagementSupport.getOperation(managementView, "JMSServerMO", "isStarted", new ComponentType("JMSManage", "ServerManage"));
-            SimpleValueSupport support = (SimpleValueSupport) operation.invoke();measurementReport.addData(new MeasurementDataTrait(measurementScheduleRequest, support.getValue().toString()));
+            SimpleValueSupport support = (SimpleValueSupport) operation.invoke();
+            measurementReport.addData(new MeasurementDataTrait(measurementScheduleRequest, support.getValue().toString()));
          }
       }
 
