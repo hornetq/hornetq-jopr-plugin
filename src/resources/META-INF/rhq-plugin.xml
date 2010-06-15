@@ -780,10 +780,9 @@
                   <c:description>maximum size of the thread pool, -1 means unlimited</c:description>
                </c:simple-property>
                <c:simple-property name="GroupID"
-                  default="false" type="boolean"
                   required="false"
                   displayName="Group ID">
-                  <c:description>group ID that will be eventually set on each message, default is false.</c:description>
+                  <c:description>group ID that will be eventually set on each message, default is no group id.</c:description>
                </c:simple-property>
                <c:simple-property name="InitialMessagePacketSize" 
                   default="1500" type="integer"
