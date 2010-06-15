@@ -107,9 +107,9 @@
                class="JMSQueueComponent"
                createDeletePolicy="both">
          <operation name="removeMessages" displayName="Remove Messages"
-                    description="Remove all the messages from this queue that match the given message selector. A null selector will delete all messages.">
+                    description="Remove all the messages from this queue.">
             <parameters>
-               <c:simple-property required="false" name="filter" displayName="A message filter"/>
+               <c:simple-property required="false" name="filter" displayName="A JMS message selector" description="A selector string to match, the default, no selector, means delete all messages."/>
             </parameters>
             <results>
                <c:simple-property name="operationResult" type="integer" description="Number of removed messages."/>
@@ -118,7 +118,7 @@
          <operation name="listMessages,result=JMSMessage" displayName="List Messages"
                     description="list all the messages currently in this queue.">
             <parameters>
-               <c:simple-property required="false" name="filter" displayName="A JMS message filter (can be empty)"/>
+               <c:simple-property required="false" name="filter" displayName="A JMS message selector" description="A selector string to match, the default, no selector, means list all messages."/>
             </parameters>
             <results>
                <c:list-property name="result">
@@ -133,9 +133,9 @@
             </results>
          </operation>
          <operation name="countMessages" displayName="Count Messages"
-                    description="Returns the number of the messages in the queue matching the given filter.">
+                    description="Returns the number of the messages in the queue.">
             <parameters>
-               <c:simple-property required="false" name="selector" displayName="the selector"/>
+               <c:simple-property required="false" name="selector" displayName="A JMS message selector" description="A selector string to match, the default, no selector, means count all messages."/>
             </parameters>
             <results>
                <c:simple-property name="operationResult" type="integer"
@@ -145,16 +145,16 @@
          <operation name="removeMessage" displayName="Remove Message"
                     description="Remove the message corresponding to the given messageID.">
             <parameters>
-               <c:simple-property required="true" name="messageID" displayName="The message ID"/>
+               <c:simple-property required="true" name="messageID" displayName="The message ID" description="The message ID of the message to remove"/>
             </parameters>
             <results>
                <c:simple-property name="operationResult" type="boolean" description="Was the message removed."/>
             </results>
          </operation>
          <operation name="expireMessages" displayName="Expire Messages"
-                    description="Expires the messages corresponding to the given filter.">
+                    description="Expires messages.">
             <parameters>
-               <c:simple-property required="false" name="filter" displayName="A message filter"/>
+               <c:simple-property required="false" name="filter" displayName="A JMS message selector" description="A selector string to match, the default, no selector, means expire all messages."/>
             </parameters>
             <results>
                <c:simple-property name="operationResult" type="integer" description="Number of expired messages."/>
@@ -163,7 +163,7 @@
          <operation name="expireMessage" displayName="Expire Message"
                     description="Expire the message corresponding to the given messageID.">
             <parameters>
-               <c:simple-property required="true" name="messageID" displayName="The message ID"/>
+               <c:simple-property required="true" name="messageID" displayName="The message ID" description="The message ID of the message to expire"/>
             </parameters>
             <results>
                <c:simple-property name="operationResult" type="boolean" description="Was the message removed."/>
@@ -172,7 +172,7 @@
          <operation name="sendMessageToDeadLetterAddress" displayName="Send Message to DLA"
                     description="Send the message corresponding to the given messageID to this queue's Dead Letter Address.">
             <parameters>
-               <c:simple-property required="true" name="messageID" displayName="The message ID"/>
+               <c:simple-property required="true" name="messageID" displayName="The message ID" description="The message ID of the message to send to the DLA"/>
             </parameters>
             <results>
                <c:simple-property name="operationResult" type="boolean" description="Was the message sent."/>
@@ -181,18 +181,18 @@
          <operation name="sendMessagesToDeadLetterAddress" displayName="Send Messages to DLA"
                     description="Send the messages corresponding to the given filter to this queue's Dead Letter Address.">
             <parameters>
-               <c:simple-property required="false" name="filterStr" displayName="A message filter"/>
+               <c:simple-property required="false" name="selector"  displayName="A JMS message selector" description="A selector string to match, the default, no selector, means send all messages to DLA."/>
             </parameters>
             <results>
-               <c:simple-property name="operationResult" type="integer" description="Number of expired messages."/>
+               <c:simple-property name="operationResult" type="integer" description="Number of messages sent to the DLA."/>
             </results>
          </operation>
          <operation name="changeMessagePriority" displayName="Change Message Priority"
                     description="Change the priority of the message corresponding to the given messageID.">
             <parameters>
-               <c:simple-property required="true" name="messageID" displayName="A message ID"/>
+               <c:simple-property required="true" name="messageID" displayName="A message ID" description="The message ID of the message"/>
                <c:simple-property required="true" type="integer" name="int:newPriority"
-                                  displayName="the new priority (between 0 and 9)"/>
+                                  displayName="priority" description="the new priority (between 0 and 9, 9 being the highest priority)"/>
             </parameters>
             <results>
                <c:simple-property name="operationResult" type="boolean" description="True if priority set."/>
@@ -201,9 +201,9 @@
          <operation name="changeMessagesPriority" displayName="Change Messages Priority"
                     description="Change the priority of the messages corresponding to the given filter.">
             <parameters>
-               <c:simple-property required="false" name="filter" displayName="A message filter"/>
+               <c:simple-property required="false" name="selector"  displayName="A JMS message selector" description="A selector string to match, the default, no selector, means change priority of all messages"/>
                <c:simple-property required="true" type="integer" name="int:newPriority"
-                                  displayName="The New Priority (between 0 and 9)"/>
+                                  displayName="priority" description="the new priority (between 0 and 9, 9 being the highest priority)"/>
             </parameters>
             <results>
                <c:simple-property name="operationResult" type="integer"
@@ -213,9 +213,9 @@
          <operation name="moveMessage" displayName="Move Message"
                     description="Move the message corresponding to the given messageID to another queue.">
             <parameters>
-               <c:simple-property required="true" name="messageID" displayName="A message ID"/>
+               <c:simple-property required="true" name="messageID" displayName="A message ID" description="The message ID of the message to move"/>
                <c:simple-property required="true" name="otherQueueName"
-                                  displayName="Destination Queue"/>
+                                  displayName="Destination Queue" description="The name of the queue to move the message to"/>
             </parameters>
             <results>
                <c:simple-property name="operationResult" type="boolean" description="True if message moved."/>
@@ -224,9 +224,9 @@
          <operation name="moveMessages" displayName="Move Messages"
                     description="Move the messages corresponding to the given filter.">
             <parameters>
-               <c:simple-property required="false" name="filter" displayName="The Filter"/>
+               <c:simple-property required="false" name="selector"  displayName="A JMS message selector" description="A selector string to match, the default, no selector, means change priority of all messages"/>
                <c:simple-property required="true" name="otherQueueName"
-                                  displayName="Destination Queue"/>
+                                  displayName="Destination Queue" description="The name of the queue to move the message to"/>
             </parameters>
             <results>
                <c:simple-property name="operationResult" type="integer" description="Number of moved messages."/>
@@ -297,10 +297,10 @@
                   <c:description>comma-separated list of JNDI bindings (use '&amp;comma;' if u need to use commas in your jndi name)</c:description>
                </c:simple-property>
                <c:simple-property name="dla" displayName="Dead Letter Address" required="false">
-                  <c:description>The address to route messages to once the message has been delivered more than the configured number of times. This is specified by 'Max Delivery Attempts'</c:description>
+                  <c:description>The address to route messages to once the message has been delivered more than the configured number of times. This is specified by 'Max Delivery Attempts'. Default is no dead letter address</c:description>
                </c:simple-property>
                <c:simple-property name="expiryAddress" displayName="Expiry Address" required="false">
-                  <c:description>The Address to route messages to once they have expired.</c:description>
+                  <c:description>The Address to route messages to once they have expired. Default is no Expiry Address</c:description>
                </c:simple-property>
                <c:simple-property name="maxSize" default="-1" type="integer" displayName="Max Size of Address"
                                   required="true">
@@ -308,7 +308,7 @@
                </c:simple-property>
                <c:simple-property name="pageSize" default="10485760" type="integer" displayName="Page Size"
                                   required="true">
-                  <c:description>The point at which messages will be paged on an Address</c:description>
+                  <c:description>The size in bytes that an address can reach before paging starts. -1 means no limit.</c:description>
                </c:simple-property>
                <c:simple-property name="maxDeliveryAttempts" type="integer" default="10"
                                   displayName="Max Delivery Attempts" required="true">
@@ -332,7 +332,7 @@
                </c:simple-property>
                <c:simple-property name="addressFullMessagePolicy" default="PAGE" type="string"
                                   displayName="Address Full Message Policy" required="true">
-                  <c:description>The policy to use when this Address is full. PAGE means that the message will be paged, DROP means that messages are just droppoed and BLOCK means that the client will block on send until the queue clears some messages</c:description>
+                  <c:description>The policy to use when this Address is full. PAGE means that the message will be paged, DROP means that messages are just dropped and BLOCK means that the client will block on send until the queue clears some messages</c:description>
                   <c:property-options>
                      <c:option name="PAGE" value="PAGE"/>
                      <c:option name="DROP" value="DROP"/>
