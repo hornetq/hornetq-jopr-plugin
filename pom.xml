@@ -10,6 +10,12 @@
   <url>http://hornetq.org</url>
   <description>HornetQ JOPR plugin</description>
 
+  <scm>
+    <connection>scm:svn:http://anonsvn.jboss.org/repos/hornetq/projects/jopr-plugin/trunk</connection>
+    <developerConnection>scm:svn:https://svn.jboss.org/repos/hornetq/projects/jopr-plugin/trunk</developerConnection>
+    <url>http://fisheye.jboss.org/browse/Hornetq/projects/jopr-plugin</url>
+  </scm>
+   
   <build>
     <finalName>${artifactId}</finalName>
     <resources>
@@ -111,10 +117,10 @@
 
    <distributionManagement>
       <repository>
-         <id>repository.jboss.org</id>
-         <name>JBoss.org Release Distribution Repository</name>
-         <url>dav:https://svn.jboss.org/repos/repository.jboss.org/maven2</url>
-      </repository>
+         <id>jboss-releases-repository</id>
+         <name>JBoss Releases Repository</name>
+         <url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</url>
+    </repository>
       <snapshotRepository>
          <id>snapshots.jboss.org</id>
          <name>JBoss.org Development Snapshot Repository</name>
