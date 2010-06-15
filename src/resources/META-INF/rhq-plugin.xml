@@ -423,7 +423,7 @@
                     description="list all the messages.">
             <parameters>
                <c:simple-property required="true" name="queueName"
-                                  displayName="the name of the queue representing a subscription"/>
+                                  displayName="Durable Subscription Name" description="The name of the durable subscription"/>
             </parameters>
             <results>
                <c:list-property name="result">
@@ -440,10 +440,10 @@
          <operation name="countMessagesForSubscription" displayName="List Messages for Subscription"
                     description="Count the number of messages matching the filter for the given subscription.">
             <parameters>
-               <c:simple-property required="true" name="clientID" displayName="the client ID"/>
+               <c:simple-property required="true" name="clientID" displayName="Client ID" description="The client ID of the durable subscriber"/>
                <c:simple-property required="true" name="subscriptionName"
-                                  displayName="Durable Subscription Name"/>
-               <c:simple-property required="false" name="filter" displayName="JMS Selector (can be empty)"/>
+                                  displayName="Durable Subscription Name" description="The name of the durable subscription"/>
+               <c:simple-property required="false" name="selector" displayName="JMS Selector" description="JMS Selector to match against, default null means count all messages"/>
             </parameters>
             <results>
                <c:simple-property name="operationResult" description="Message Subscriptions."/>
@@ -452,9 +452,9 @@
          <operation name="dropDurableSubscription" displayName="Drop Durable Subscription"
                     description="Drop a durable subscription.">
             <parameters>
-               <c:simple-property required="true" name="clientID" displayName="The Client ID"/>
+               <c:simple-property required="true" name="clientID" displayName="Client ID" description="The client ID of the durable subscriber"/>
                <c:simple-property required="true" name="subscriptionName"
-                                  displayName="Durable Subscription Name"/>
+                                  displayName="Durable Subscription Name" description="The name of the durable subscription"/>
             </parameters>
          </operation>
          <operation name="dropAllSubscriptions" displayName="Drop Durable Subscriptions"
@@ -497,7 +497,7 @@
                   <c:description>The address to route messages to once the message has been delivered more than the configured number of times. This is specified by 'Max Delivery Attempts'. The default is no DLA</c:description>
                </c:simple-property>
                <c:simple-property name="expiryAddress" displayName="Expiry Address" required="false">
-                  <c:description>The Address to route messages to once they have expired. The default id no expiry address</c:description>
+                  <c:description>The Address to route messages to once they have expired. The default is no expiry address</c:description>
                </c:simple-property>
                <c:simple-property name="maxSize" default="-1" type="integer" displayName="Max Size of Address"
                                   required="true">
