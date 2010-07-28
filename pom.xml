@@ -9,7 +9,25 @@
   <name>JBoss Application Server JOPR plugin</name>
   <url>http://hornetq.org</url>
   <description>HornetQ JOPR plugin</description>
+   <licenses>
+      <license>
+         <name>Apache 2</name>
+         <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
 
+  <developers>
+     <developer>
+        <name>Andy Taylor</name>
+        <email>ataylor@redhat.com</email>
+        <organization>Red Hat</organization>
+        <roles>
+          <role>core developer</role>
+        </roles>
+     </developer>
+  </developers>
+   
   <scm>
     <connection>scm:svn:http://anonsvn.jboss.org/repos/hornetq/projects/jopr-plugin/trunk</connection>
     <developerConnection>scm:svn:https://svn.jboss.org/repos/hornetq/projects/jopr-plugin/trunk</developerConnection>
