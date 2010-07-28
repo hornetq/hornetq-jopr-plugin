@@ -26,7 +26,14 @@
           <role>core developer</role>
         </roles>
      </developer>
-  </developers>
+     <developer>
+        <name>Jeff Mesnil</name>
+        <email>jmesnil@redhat.com</email>
+        <organization>Red Hat</organization>
+        <roles>
+          <role>core developer</role>
+        </roles>
+     </developer>  </developers>
    
   <scm>
     <connection>scm:svn:http://anonsvn.jboss.org/repos/hornetq/projects/jopr-plugin/trunk</connection>
