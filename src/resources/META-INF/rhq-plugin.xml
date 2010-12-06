@@ -631,7 +631,7 @@
                </c:simple-property>
                <c:simple-property name="connectorNames"
                   default="netty"
-                  readOnly="true" required="false"
+                  readOnly="true" required="true"
                   displayName="Connectors to live servers">
                   <c:description>comma-separated list of either connector names or a discovery group name</c:description>
                </c:simple-property>
