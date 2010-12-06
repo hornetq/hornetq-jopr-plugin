@@ -86,7 +86,6 @@ public class JMSConnectionFactoryComponent extends JMSResourceComponent
    {
       Map<String, PropertySimple> simpleProps = configurationUpdateReport.getConfiguration().getSimpleProperties();
       String name = simpleProps.get("name").getStringValue();
-      long discoveryRefreshTimeout = simpleProps.get("DiscoveryRefreshTimeout").getLongValue();
       String clientId = simpleProps.get("ClientID").getStringValue();
       int dupsOkBatchSize = simpleProps.get("DupsOKBatchSize").getIntegerValue();
       int transactionBatchSize = simpleProps.get("TransactionBatchSize").getIntegerValue();
@@ -107,7 +106,6 @@ public class JMSConnectionFactoryComponent extends JMSResourceComponent
       long maxRetryInterval = simpleProps.get("MaxRetryInterval").getLongValue();
       double retryIntervalMultiplier = simpleProps.get("RetryIntervalMultiplier").getDoubleValue();
       int reconnectAttempts = simpleProps.get("ReconnectAttempts").getIntegerValue();
-      boolean failoverOnShutdown = simpleProps.get("FailoverOnServerShutdown").getBooleanValue();
       int scheduledThreadPoolMaxSize = simpleProps.get("ScheduledThreadPoolMaxSize").getIntegerValue();
       int threadPoolMaxSize = simpleProps.get("ThreadPoolMaxSize").getIntegerValue();
       String groupId = simpleProps.get("GroupID").getStringValue();
@@ -120,7 +118,7 @@ public class JMSConnectionFactoryComponent extends JMSResourceComponent
       {
          ManagementView managementView = getProfileService();
 
-         updateConnectionFactory(configurationUpdateReport, managementView, name, discoveryRefreshTimeout, clientId, dupsOkBatchSize, transactionBatchSize, clientFailureCheckPeriod, connectionTTL, callTimeout, consumerWindowSize, confirmationWindowSize, producerMaxRate, producerWindowSize, cacheLargeMessageClient, minLargeMessageSize, blockOnNonDurableSend, blockOnAcknowledge, blockOnDurableSend, autoGroup, preAcknowledge, maxRetryInterval, retryIntervalMultiplier, reconnectAttempts, failoverOnShutdown, scheduledThreadPoolMaxSize, threadPoolMaxSize, groupId, initialMessagePacketSize, useGlobalPools, retryInterval, connectionLoadBalancingPolicyClassName);
+         updateConnectionFactory(configurationUpdateReport, managementView, name, clientId, dupsOkBatchSize, transactionBatchSize, clientFailureCheckPeriod, connectionTTL, callTimeout, consumerWindowSize, confirmationWindowSize, producerMaxRate, producerWindowSize, cacheLargeMessageClient, minLargeMessageSize, blockOnNonDurableSend, blockOnAcknowledge, blockOnDurableSend, autoGroup, preAcknowledge, maxRetryInterval, retryIntervalMultiplier, reconnectAttempts, scheduledThreadPoolMaxSize, threadPoolMaxSize, groupId, initialMessagePacketSize, useGlobalPools, retryInterval, connectionLoadBalancingPolicyClassName);
       }
       catch (Exception e)
       {
@@ -134,7 +132,6 @@ public class JMSConnectionFactoryComponent extends JMSResourceComponent
    private void updateConnectionFactory(ConfigurationUpdateReport configurationUpdateReport,
                                         ManagementView managementView,
                                         String name,
-                                        long discoveryRefreshTimeout,
                                         String clientId,
                                         int dupsOkBatchSize,
                                         int transactionBatchSize,
@@ -155,7 +152,6 @@ public class JMSConnectionFactoryComponent extends JMSResourceComponent
                                         long maxRetryInterval,
                                         double retryIntervalMultiplier,
                                         int reconnectAttempts,
-                                        boolean failoverOnShutdown,
                                         int scheduledThreadPoolMaxSize,
                                         int threadPoolMaxSize,
                                         String groupId,
@@ -166,7 +162,6 @@ public class JMSConnectionFactoryComponent extends JMSResourceComponent
    {
       ManagedOperation operation = ManagementSupport.getOperation(managementView, COMPONENT_NAME, "updateConnectionFactory", new ComponentType("JMSManage", "ConnectionFactoryManage"));
       operation.invoke(new SimpleValueSupport(SimpleMetaType.STRING, name),
-            new SimpleValueSupport(SimpleMetaType.LONG_PRIMITIVE, discoveryRefreshTimeout),
             new SimpleValueSupport(SimpleMetaType.STRING, clientId),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, dupsOkBatchSize),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, transactionBatchSize),
@@ -187,7 +182,6 @@ public class JMSConnectionFactoryComponent extends JMSResourceComponent
             new SimpleValueSupport(SimpleMetaType.LONG_PRIMITIVE, maxRetryInterval),
             new SimpleValueSupport(SimpleMetaType.DOUBLE_PRIMITIVE, retryIntervalMultiplier),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, reconnectAttempts),
-            new SimpleValueSupport(SimpleMetaType.BOOLEAN_PRIMITIVE, failoverOnShutdown),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, scheduledThreadPoolMaxSize),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, threadPoolMaxSize),
             new SimpleValueSupport(SimpleMetaType.STRING, groupId),

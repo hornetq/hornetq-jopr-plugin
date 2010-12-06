@@ -606,53 +606,38 @@
                <c:simple-property name="name" displayName="Connection Factory Name" required="true" readOnly="true">
                   <c:description>Name of the connection factory to deploy</c:description>
                </c:simple-property>
+               <c:simple-property name="ha"
+                  default="false" type="boolean"
+                  displayName="supports high availability" required="true" readOnly="true">
+                  <c:description>whether or not this connection factory will support high availability</c:description>
+               </c:simple-property>
+               <c:simple-property name="useDiscovery"
+                  default="false" type="boolean"
+                  displayName="use discovery" required="true" readOnly="true">
+                  <c:description>whether or not to use connectors or discovery</c:description>
+               </c:simple-property> 
+               <c:simple-property name="cfType"
+                  default="1" type="integer"
+                  displayName="the type of factory" required="true" readOnly="true">
+                  <c:description>the connection factory type</c:description>
+                   <c:property-options>
+                     <c:option name="JMS Factory" value="0"/>
+                     <c:option name="JMS Queue Factory" value="1"/>
+                     <c:option name="JMS Topic Factory" value="2"/>
+                     <c:option name="JMS XA Factory" value="3"/>
+                     <c:option name="JMS XA Queue Factory" value="4"/>
+                     <c:option name="JMS XA Topic Factory" value="5"/>
+                  </c:property-options>
+               </c:simple-property>
+               <c:simple-property name="connectorNames"
+                  default="netty"
+                  readOnly="true" required="false"
+                  displayName="Connectors to live servers">
+                  <c:description>comma-separated list of either connector names or a discovery group name</c:description>
+               </c:simple-property>
                <c:simple-property name="Bindings" displayName="JNDI Bindings" required="true" readOnly="true">
                   <c:description>comma-separated list of JNDI bindings (use '&amp;comma;' if u need to use commas in your jndi name)</c:description>
                </c:simple-property>
-               <c:simple-property name="liveTransportClassNames"
-                  default="org.hornetq.integration.transports.netty.NettyConnectorFactory"
-                  readOnly="true" required="false"
-                  displayName="Connectors to live servers">
-                  <c:description>comma-separated list of class names to connect to live servers, default id 'org.hornetq.core.remoting.impl.netty.NettyConnectorFactory'.</c:description>
-               </c:simple-property>
-               <c:simple-property name="liveTransportParams"
-                  default="{host=localhost,port=5445}"
-                  readOnly="true" required="false"
-                  displayName="Parameters for connectors to live servers">
-                  <c:description>comma-separated list of key=value parameters for the live connectors ( enclosed between { }), default is {host=localhost,port=5445}.</c:description>
-               </c:simple-property>
-               <c:simple-property name="backupTransportClassNames"
-                  required="false" readOnly="true"
-                  displayName="Connectors to backup servers">
-                  <c:description>comma-separated list of class names to connect to backup servers, default is no backup connectors.</c:description>
-               </c:simple-property>
-               <c:simple-property name="backupTransportParams"
-                  required="false" readOnly="true"
-                  displayName="Parameters for connectors to backup servers">
-                  <c:description>comma-separated list of key=value parameters for the backup connectors ( enclosed between { }), default is no backup params. NB these must match 'Connectors to backup servers', 1 for each entry.</c:description>
-               </c:simple-property>
-               <c:simple-property name="DiscoveryAddress"
-                  required="false"
-                  readOnly="true"
-                  displayName="Discovery Address">
-                  <c:description>the address to listen to discover which connectors this connection factory can use. NB this is used instead of static connectors, i.e. setting 'Connectors to backup servers'.</c:description>
-               </c:simple-property>
-               <c:simple-property name="DiscoveryPort"
-                  readOnly="true"
-                  default="0" type="integer"
-                  displayName="Discovery Port">
-                  <c:description>port to listen on to discover which connectors this connection factory can use. Should be used when 'Discovery Address' is set and greater 0</c:description>
-               </c:simple-property>
-               <c:simple-property name="DiscoveryRefreshTimeout"
-                  default="10000" type="long"
-                   displayName="Discovery Refresh Timeout">
-                   <c:description>refresh timeout for discovered HornetQ servers in milli seconds.</c:description>
-                </c:simple-property>
-               <c:simple-property name="DiscoveryInitialWaitTimeout"
-                   default="2000" type="long"
-                   displayName="Discovery Initial Wait Timeout">
-                   <c:description>initial wait timeout if this connection factory is configured to use discovery, in milliseconds. </c:description>
-                </c:simple-property>
                <c:simple-property name="ClientID"
                   required="false"
                   displayName="Client ID">
@@ -762,11 +747,6 @@
                   default="0" type="integer"
                   displayName="Reconnect Attempts">
                   <c:description>maximum number of attempts to retry connection in case of failure</c:description>
-               </c:simple-property>
-               <c:simple-property name="FailoverOnServerShutdown"
-                  default="false" type="boolean"
-                  displayName="Failover On Server Shutdown">
-                  <c:description>whether connections created by this factory must failover in case the server they are connected to has normally shut down</c:description>
                </c:simple-property>
                <c:simple-property name="ScheduledThreadPoolMaxSize"
                   default="5" type="integer"

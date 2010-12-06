@@ -56,11 +56,11 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
 
       for (MeasurementScheduleRequest measurementScheduleRequest : measurementScheduleRequests)
       {
-         if("provider".equalsIgnoreCase(measurementScheduleRequest.getName()))
+         if ("provider".equalsIgnoreCase(measurementScheduleRequest.getName()))
          {
             measurementReport.addData(new MeasurementDataTrait(measurementScheduleRequest, "HornetQ"));
          }
-         else if("started".equalsIgnoreCase(measurementScheduleRequest.getName()))
+         else if ("started".equalsIgnoreCase(measurementScheduleRequest.getName()))
          {
             ManagementView managementView = getProfileService();
             ManagedOperation operation = ManagementSupport.getOperation(managementView, "JMSServerMO", "isStarted", new ComponentType("JMSManage", "ServerManage"));
@@ -95,14 +95,11 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
          {
 
             String name = simpleProps.get("name").getStringValue();
-            String liveTransportClassNames = simpleProps.get("liveTransportClassNames").getStringValue();
-            String liveTransportParams = simpleProps.get("liveTransportParams").getStringValue();
-            String backupTransportClassNames = simpleProps.get("backupTransportClassNames").getStringValue();
-            String backupTransportParams = simpleProps.get("backupTransportParams").getStringValue();
+            String connectorNames = simpleProps.get("connectorNames").getStringValue();
+            boolean ha = simpleProps.get("ha").getBooleanValue();
+            boolean useDiscovery = simpleProps.get("useDiscovery").getBooleanValue();
+            int cfType = simpleProps.get("cfType").getIntegerValue();
             String bindings = simpleProps.get("Bindings").getStringValue();
-            String discoveryAddress = simpleProps.get("DiscoveryAddress").getStringValue();
-            int discoveryPort = simpleProps.get("DiscoveryPort").getIntegerValue();
-            long discoveryRefreshTimeout = simpleProps.get("DiscoveryRefreshTimeout").getLongValue();
             String clientId = simpleProps.get("ClientID").getStringValue();
             int dupsOkBatchSize = simpleProps.get("DupsOKBatchSize").getIntegerValue();
             int transactionBatchSize = simpleProps.get("TransactionBatchSize").getIntegerValue();
@@ -123,7 +120,6 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
             long maxRetryInterval = simpleProps.get("MaxRetryInterval").getLongValue();
             double retryIntervalMultiplier = simpleProps.get("RetryIntervalMultiplier").getDoubleValue();
             int reconnectAttempts = simpleProps.get("ReconnectAttempts").getIntegerValue();
-            boolean failoverOnShutdown = simpleProps.get("FailoverOnServerShutdown").getBooleanValue();
             int scheduledThreadPoolMaxSize = simpleProps.get("ScheduledThreadPoolMaxSize").getIntegerValue();
             int threadPoolMaxSize = simpleProps.get("ThreadPoolMaxSize").getIntegerValue();
             String groupId = simpleProps.get("GroupID").getStringValue();
@@ -131,7 +127,8 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
             boolean useGlobalPools = simpleProps.get("UseGlobalPools").getBooleanValue();
             long retryInterval = simpleProps.get("RetryInterval").getLongValue();
             String connectionLoadBalancingPolicyClassName = simpleProps.get("ConnectionLoadBalancingPolicyClassName").getStringValue();
-            createConnectionFactory(createResourceReport, managementView, name,liveTransportClassNames, liveTransportParams, backupTransportClassNames, backupTransportParams, bindings, discoveryAddress, discoveryPort, discoveryRefreshTimeout, clientId, dupsOkBatchSize, transactionBatchSize, clientFailureCheckPeriod, connectionTTL, callTimeout, consumerWindowSize, confirmationWindowSize, producerMaxRate, producerWindowSize, cacheLargeMessageClient, minLargeMessageSize, blockOnNonDurableSend, blockOnAcknowledge, blockOnDurableSend, autoGroup, preAcknowledge, maxRetryInterval, retryIntervalMultiplier, reconnectAttempts, failoverOnShutdown, scheduledThreadPoolMaxSize, threadPoolMaxSize, groupId, initialMessagePacketSize, useGlobalPools, retryInterval, connectionLoadBalancingPolicyClassName);
+            createConnectionFactory(createResourceReport, managementView, name, connectorNames, ha, useDiscovery, cfType, bindings,
+                  clientId, dupsOkBatchSize, transactionBatchSize, clientFailureCheckPeriod, connectionTTL, callTimeout, consumerWindowSize, confirmationWindowSize, producerMaxRate, producerWindowSize, cacheLargeMessageClient, minLargeMessageSize, blockOnNonDurableSend, blockOnAcknowledge, blockOnDurableSend, autoGroup, preAcknowledge, maxRetryInterval, retryIntervalMultiplier, reconnectAttempts, scheduledThreadPoolMaxSize, threadPoolMaxSize, groupId, initialMessagePacketSize, useGlobalPools, retryInterval, connectionLoadBalancingPolicyClassName);
          }
          else
          {
@@ -181,19 +178,50 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
       this.resourceContext = null;
    }
 
-   private void createConnectionFactory(CreateResourceReport createResourceReport, ManagementView managementView, String name,String liveTransportClassNames, String liveTransportParams, String backupTransportClassNames, String backupTransportParams,  String bindings, String discoveryAddress, int discoveryPort, long discoveryRefreshTimeout, String clientId, int dupsOkBatchSize, int transactionBatchSize, long clientFailureCheckPeriod, long connectionTTL, long callTimeout, int consumerWindowSize, int confirmationWindowSize, int producerMaxRate, int producerWindowSize, boolean cacheLargeMessageClient, int minLargeMessageSize, boolean blockOnNonDurableSend, boolean blockOnAcknowledge, boolean blockOnDurableSend, boolean autoGroup, boolean preAcknowledge, long maxRetryInterval, double retryIntervalMultiplier, int reconnectAttempts, boolean failoverOnShutdown, int scheduledThreadPoolMaxSize, int threadPoolMaxSize, String groupId, int initialMessagePacketSize, boolean useGlobalPools, long retryInterval, String connectionLoadBalancingPolicyClassName)
+   private void createConnectionFactory(CreateResourceReport createResourceReport,
+                                        ManagementView managementView,
+                                        String name,
+                                        String connectorNames,
+                                        boolean ha,
+                                        boolean useDiscovery,
+                                        int cfType,
+                                        String bindings,
+                                        String clientId,
+                                        int dupsOkBatchSize,
+                                        int transactionBatchSize,
+                                        long clientFailureCheckPeriod,
+                                        long connectionTTL,
+                                        long callTimeout,
+                                        int consumerWindowSize,
+                                        int confirmationWindowSize,
+                                        int producerMaxRate,
+                                        int producerWindowSize,
+                                        boolean cacheLargeMessageClient,
+                                        int minLargeMessageSize,
+                                        boolean blockOnNonDurableSend,
+                                        boolean blockOnAcknowledge,
+                                        boolean blockOnDurableSend,
+                                        boolean autoGroup,
+                                        boolean preAcknowledge,
+                                        long maxRetryInterval,
+                                        double retryIntervalMultiplier,
+                                        int reconnectAttempts,
+                                        int scheduledThreadPoolMaxSize,
+                                        int threadPoolMaxSize,
+                                        String groupId,
+                                        int initialMessagePacketSize,
+                                        boolean useGlobalPools,
+                                        long retryInterval,
+                                        String connectionLoadBalancingPolicyClassName)
          throws Exception
    {
       ManagedOperation operation = ManagementSupport.getOperation(managementView, JMSConstants.ConnectionFactory.COMPONENT_NAME, "createConnectionFactory", JMSConstants.ConnectionFactory.COMPONENT_TYPE);
       operation.invoke(new SimpleValueSupport(SimpleMetaType.STRING, name),
-            new SimpleValueSupport(SimpleMetaType.STRING, liveTransportClassNames),
-            new SimpleValueSupport(SimpleMetaType.STRING, liveTransportParams),
-            new SimpleValueSupport(SimpleMetaType.STRING, backupTransportClassNames),
-            new SimpleValueSupport(SimpleMetaType.STRING, backupTransportParams),
+            new SimpleValueSupport(SimpleMetaType.BOOLEAN_PRIMITIVE, ha),
+            new SimpleValueSupport(SimpleMetaType.BOOLEAN_PRIMITIVE, useDiscovery),
+            new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, cfType),
+            new SimpleValueSupport(SimpleMetaType.STRING, connectorNames),
             new SimpleValueSupport(SimpleMetaType.STRING, bindings),
-            new SimpleValueSupport(SimpleMetaType.STRING, discoveryAddress),
-            new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, discoveryPort),
-            new SimpleValueSupport(SimpleMetaType.LONG_PRIMITIVE, discoveryRefreshTimeout),
             new SimpleValueSupport(SimpleMetaType.STRING, clientId),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, dupsOkBatchSize),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, transactionBatchSize),
@@ -214,7 +242,6 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
             new SimpleValueSupport(SimpleMetaType.LONG_PRIMITIVE, maxRetryInterval),
             new SimpleValueSupport(SimpleMetaType.DOUBLE_PRIMITIVE, retryIntervalMultiplier),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, reconnectAttempts),
-            new SimpleValueSupport(SimpleMetaType.BOOLEAN_PRIMITIVE, failoverOnShutdown),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, scheduledThreadPoolMaxSize),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, threadPoolMaxSize),
             new SimpleValueSupport(SimpleMetaType.STRING, groupId),
@@ -322,7 +349,7 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
    @Override
    protected String getInvokeOperation()
    {
-      return "invokeManagerOperation"; 
+      return "invokeManagerOperation";
    }
 
    @Override
@@ -357,7 +384,7 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
 
    public void updateResourceConfiguration(ConfigurationUpdateReport configurationUpdateReport)
    {
-      
+
    }
 
    private void createRoles(CreateResourceReport configurationUpdateReport, String name, StringBuffer sendRoles, StringBuffer consumeRoles)
