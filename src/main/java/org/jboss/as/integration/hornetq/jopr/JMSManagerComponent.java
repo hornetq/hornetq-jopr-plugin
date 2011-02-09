@@ -138,6 +138,7 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
             String expiryAddress = simpleProps.get("expiryAddress").getStringValue();
             int maxSize = simpleProps.get("maxSize").getIntegerValue();
             int pageSize = simpleProps.get("pageSize").getIntegerValue();
+            int pageMaxCacheSize = simpleProps.get("pageMaxCacheSize").getIntegerValue();
             int maxDeliveryAttempts = simpleProps.get("maxDeliveryAttempts").getIntegerValue();
             long redeliveryDelay = simpleProps.get("redeliveryDelay").getLongValue();
             boolean lastValueQueue = simpleProps.get("lastValueQueue").getBooleanValue();
@@ -146,11 +147,11 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
             String addressFullMessagePolicy = simpleProps.get("addressFullMessagePolicy").getStringValue();
             if ("JMS Queue".equalsIgnoreCase(createResourceReport.getResourceType().getName()))
             {
-               createQueue(createResourceReport, managementView, name, jndiName, DLA, expiryAddress, maxSize, pageSize, maxDeliveryAttempts, redeliveryDelay, lastValueQueue, redistributionDelay, sendToDLAOnNoRoute, addressFullMessagePolicy);
+               createQueue(createResourceReport, managementView, name, jndiName, DLA, expiryAddress, maxSize, pageSize, pageMaxCacheSize, maxDeliveryAttempts, redeliveryDelay, lastValueQueue, redistributionDelay, sendToDLAOnNoRoute, addressFullMessagePolicy);
             }
             else if ("JMS Topic".equalsIgnoreCase(createResourceReport.getResourceType().getName()))
             {
-               createTopic(createResourceReport, managementView, name, jndiName, DLA, expiryAddress, maxSize, pageSize, maxDeliveryAttempts, redeliveryDelay, lastValueQueue, redistributionDelay, sendToDLAOnNoRoute, addressFullMessagePolicy);
+               createTopic(createResourceReport, managementView, name, jndiName, DLA, expiryAddress, maxSize, pageSize, pageMaxCacheSize, maxDeliveryAttempts, redeliveryDelay, lastValueQueue, redistributionDelay, sendToDLAOnNoRoute, addressFullMessagePolicy);
             }
          }
 
@@ -255,7 +256,7 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
       createResourceReport.setResourceName(name);
    }
 
-   private void createQueue(CreateResourceReport createResourceReport, ManagementView managementView, String name, String jndiName, String DLA, String expiryAddress, int maxSize, int pageSize, int maxDeliveryAttempts, long redeliveryDelay, boolean lastValueQueue, long redistributionDelay, boolean sendToDLAOnNoRoute, String addressFullMessagePolicy)
+   private void createQueue(CreateResourceReport createResourceReport, ManagementView managementView, String name, String jndiName, String DLA, String expiryAddress, int maxSize, int pageSize, int pageMaxCacheSize, int maxDeliveryAttempts, long redeliveryDelay, boolean lastValueQueue, long redistributionDelay, boolean sendToDLAOnNoRoute, String addressFullMessagePolicy)
          throws Exception
    {
       ManagedOperation operation = ManagementSupport.getOperation(managementView, JMSConstants.Queue.COMPONENT_NAME, "createQueue", JMSConstants.Queue.COMPONENT_TYPE);
@@ -270,6 +271,7 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
             new SimpleValueSupport(SimpleMetaType.STRING, expiryAddress),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, maxSize),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, pageSize),
+            new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, pageMaxCacheSize),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, maxDeliveryAttempts),
             new SimpleValueSupport(SimpleMetaType.LONG_PRIMITIVE, redeliveryDelay),
             new SimpleValueSupport(SimpleMetaType.BOOLEAN_PRIMITIVE, lastValueQueue),
@@ -283,7 +285,7 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
       createResourceReport.setResourceName("jms.queue." + name);
    }
 
-   private void createTopic(CreateResourceReport createResourceReport, ManagementView managementView, String name, String jndiName, String DLA, String expiryAddress, int maxSize, int pageSize, int maxDeliveryAttempts, long redeliveryDelay, boolean lastValueQueue, long redistributionDelay, boolean sendToDLAOnNoRoute, String addressFullMessagePolicy)
+   private void createTopic(CreateResourceReport createResourceReport, ManagementView managementView, String name, String jndiName, String DLA, String expiryAddress, int maxSize, int pageSize, int pageMaxCacheSize, int maxDeliveryAttempts, long redeliveryDelay, boolean lastValueQueue, long redistributionDelay, boolean sendToDLAOnNoRoute, String addressFullMessagePolicy)
          throws Exception
    {
       ManagedOperation operation = ManagementSupport.getOperation(managementView, JMSConstants.Topic.COMPONENT_NAME,
@@ -303,6 +305,7 @@ public class JMSManagerComponent extends JMSResourceComponent implements Resourc
             new SimpleValueSupport(SimpleMetaType.STRING, expiryAddress),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, maxSize),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, pageSize),
+            new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, pageMaxCacheSize),
             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, maxDeliveryAttempts),
             new SimpleValueSupport(SimpleMetaType.LONG_PRIMITIVE, redeliveryDelay),
             new SimpleValueSupport(SimpleMetaType.BOOLEAN_PRIMITIVE, lastValueQueue),

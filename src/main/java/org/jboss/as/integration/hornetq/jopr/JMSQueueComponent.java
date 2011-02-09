@@ -140,6 +140,7 @@ public class JMSQueueComponent extends JMSResourceComponent implements ResourceC
       String expiryAddress = simpleProps.get("expiryAddress").getStringValue();
       int maxSize = simpleProps.get("maxSize").getIntegerValue();
       int pageSize = simpleProps.get("pageSize").getIntegerValue();
+      int pageMaxCacheSize = simpleProps.get("pageMaxCacheSize").getIntegerValue();
       int maxDeliveryAttempts = simpleProps.get("maxDeliveryAttempts").getIntegerValue();
       long redeliveryDelay = simpleProps.get("redeliveryDelay").getLongValue();
       boolean lastValueQueue = simpleProps.get("lastValueQueue").getBooleanValue();
@@ -160,6 +161,7 @@ public class JMSQueueComponent extends JMSResourceComponent implements ResourceC
              new SimpleValueSupport(SimpleMetaType.STRING, expiryAddress),
              new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, maxSize),
              new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, pageSize),
+             new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, pageMaxCacheSize),
              new SimpleValueSupport(SimpleMetaType.INTEGER_PRIMITIVE, maxDeliveryAttempts),
              new SimpleValueSupport(SimpleMetaType.LONG_PRIMITIVE, redeliveryDelay),
              new SimpleValueSupport(SimpleMetaType.BOOLEAN_PRIMITIVE, lastValueQueue),

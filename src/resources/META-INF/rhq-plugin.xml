@@ -26,7 +26,6 @@
         displayName="HornetQPlugin"
         description="Supports management and monitoring of HornetQ Servers"
         package="org.jboss.as.integration.hornetq.jopr"
-        version="2.1.10"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="urn:xmlns:rhq-plugin"
         xmlns:c="urn:xmlns:rhq-configuration">
@@ -309,6 +308,10 @@
                                   required="true">
                   <c:description>The size in bytes that an address can reach before paging starts. -1 means no limit.</c:description>
                </c:simple-property>
+               <c:simple-property name="pageMaxCacheSize" default="5" type="integer" displayName="Page Cache Max Size"
+                                  required="true">
+                  <c:description>The max number of pages in the soft memory cache.</c:description>
+               </c:simple-property>
                <c:simple-property name="maxDeliveryAttempts" type="integer" default="10"
                                   displayName="Max Delivery Attempts" required="true">
                   <c:description>The maximum time to attempt delivery of a message to a consumer, once hit the message is routed to which ever address is specified by 'Dead Letter Address'</c:description>
@@ -505,6 +508,10 @@
                <c:simple-property name="pageSize" default="10485760" type="integer" displayName="Page Size"
                                   required="true">
                   <c:description>The size in bytes an address can reach before paging occurs</c:description>
+               </c:simple-property>
+               <c:simple-property name="pageMaxCacheSize" default="5" type="integer" displayName="Page Cache Max Size"
+                                  required="true">
+                  <c:description>The max number of pages in the soft memory cache.</c:description>
                </c:simple-property>
                <c:simple-property name="maxDeliveryAttempts" type="integer" default="10"
                                   displayName="Max Delivery Attempts" required="true">

@@ -5,7 +5,7 @@
   <groupId>org.hornetq</groupId>
   <artifactId>hornetq-jopr-plugin</artifactId>
   <packaging>jar</packaging>
-  <version>2.0.0.CR1</version>
+  <version>2.0.0.CR2</version>
   <name>JBoss Application Server JOPR plugin</name>
   <url>http://hornetq.org</url>
   <description>HornetQ JOPR plugin</description>
@@ -58,11 +58,16 @@
           </configuration>
        </plugin>
        <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-        </configuration>
-      </plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <configuration>
+             <archive>
+                <manifest>
+                   <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                   <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                </manifest>
+             </archive>
+          </configuration>
+       </plugin>
     </plugins>
   </build>
   <dependencies>
