@@ -53,8 +53,8 @@ public class JMSConnectionFactoryDiscoveryComponent implements ResourceDiscovery
          set.add(new DiscoveredResourceDetails(resourceType,
              queueName,
              queueName,
+             null,
              "a JMS ConnectionFactory",
-             "",
              resourceDiscoveryContext.getDefaultPluginConfiguration(),
              null));
       }

@@ -59,8 +59,8 @@ public class JMSTopicDiscoveryComponent implements ResourceDiscoveryComponent
          set.add(new DiscoveredResourceDetails(resourceType,
              queueName,
              queueName,
+             null,
              "a JMS Topic",
-             "",
              resourceDiscoveryContext.getDefaultPluginConfiguration(),
              null));
       }
