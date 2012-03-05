@@ -5,10 +5,10 @@
   <groupId>org.hornetq</groupId>
   <artifactId>hornetq-jopr-plugin</artifactId>
   <packaging>jar</packaging>
-  <version>2.0.0.CR2</version>
-  <name>JBoss Application Server JOPR plugin</name>
+  <version>2.0.1-SNAPSHOT</version>
+  <name>HornetQ RHQ Plugin</name>
   <url>http://hornetq.org</url>
-  <description>HornetQ JOPR plugin</description>
+  <description>HornetQ RHQ plugin</description>
    <licenses>
       <license>
          <name>Apache 2</name>
@@ -33,7 +33,8 @@
         <roles>
           <role>core developer</role>
         </roles>
-     </developer>  </developers>
+     </developer>  
+  </developers>
    
   <scm>
     <connection>scm:svn:http://anonsvn.jboss.org/repos/hornetq/projects/jopr-plugin/trunk</connection>
@@ -76,23 +77,25 @@
         <groupId>org.jboss.integration</groupId>
         <artifactId>jboss-profileservice-spi</artifactId>
         <version>6.0.0.Alpha9</version>
+        <scope>provided</scope>
      </dependency>
     <dependency>
        <groupId>org.jboss.man</groupId>
        <artifactId>jboss-managed</artifactId>
        <version>2.1.1.SP1</version>
+       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.rhq</groupId>
       <artifactId>rhq-core-domain</artifactId>
        <version>1.4.0.B01</version>
-       <scope>compile</scope>
+       <scope>provided</scope>
      </dependency>
      <dependency>
       <groupId>org.rhq</groupId>
       <artifactId>rhq-core-plugin-api</artifactId>
       <version>1.4.0.B01</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
      </dependency>
       <dependency>
          <groupId>org.rhq</groupId>
@@ -105,11 +108,13 @@
         <groupId>org.hibernate.javax.persistence</groupId>
         <artifactId>hibernate-jpa-2.0-api</artifactId>
         <version>1.0.0-CR-1</version>
+        <scope>provided</scope>
      </dependency>
      <dependency>
         <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-annotations</artifactId>
+        <artifactId>hibernate-annotations</artifactId>
         <version>3.5.0-CR-1</version>
+        <scope>provided</scope>
      </dependency>
   </dependencies>
 
@@ -150,7 +155,7 @@
          <id>jboss-releases-repository</id>
          <name>JBoss Releases Repository</name>
          <url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</url>
-    </repository>
+      </repository>
       <snapshotRepository>
          <id>snapshots.jboss.org</id>
          <name>JBoss.org Development Snapshot Repository</name>
