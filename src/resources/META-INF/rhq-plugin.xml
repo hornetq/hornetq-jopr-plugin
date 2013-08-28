@@ -188,8 +188,8 @@
          <operation name="changeMessagePriority" displayName="Change Message Priority"
                     description="Change the priority of the message corresponding to the given messageID.">
             <parameters>
-               <c:simple-property required="true" name="messageID" displayName="A message ID" description="The message ID of the message"/>
-               <c:simple-property required="true" type="integer" name="int:newPriority"
+               <c:simple-property required="true" name="0:messageID" displayName="A message ID" description="The message ID of the message"/>
+               <c:simple-property required="true" type="integer" name="1:int:newPriority"
                                   displayName="priority" description="the new priority (between 0 and 9, 9 being the highest priority)"/>
             </parameters>
             <results>
@@ -199,8 +199,8 @@
          <operation name="changeMessagesPriority" displayName="Change Messages Priority"
                     description="Change the priority of the messages corresponding to the given filter.">
             <parameters>
-               <c:simple-property required="false" name="selector"  displayName="A JMS message selector" description="A selector string to match, the default, no selector, means change priority of all messages"/>
-               <c:simple-property required="true" type="integer" name="int:newPriority"
+               <c:simple-property required="false" name="0:selector"  displayName="A JMS message selector" description="A selector string to match, the default, no selector, means change priority of all messages"/>
+               <c:simple-property required="true" type="integer" name="1:int:newPriority"
                                   displayName="priority" description="the new priority (between 0 and 9, 9 being the highest priority)"/>
             </parameters>
             <results>
@@ -211,8 +211,8 @@
          <operation name="moveMessage" displayName="Move Message"
                     description="Move the message corresponding to the given messageID to another queue.">
             <parameters>
-               <c:simple-property required="true" name="messageID" displayName="A message ID" description="The message ID of the message to move"/>
-               <c:simple-property required="true" name="otherQueueName"
+               <c:simple-property required="true" name="0:messageID" displayName="A message ID" description="The message ID of the message to move"/>
+               <c:simple-property required="true" name="1:otherQueueName"
                                   displayName="Destination Queue" description="The name of the queue to move the message to"/>
             </parameters>
             <results>
@@ -222,8 +222,8 @@
          <operation name="moveMessages" displayName="Move Messages"
                     description="Move the messages corresponding to the given filter.">
             <parameters>
-               <c:simple-property required="false" name="selector"  displayName="A JMS message selector" description="A selector string to match, the default, no selector, means change priority of all messages"/>
-               <c:simple-property required="true" name="otherQueueName"
+               <c:simple-property required="false" name="0:selector"  displayName="A JMS message selector" description="A selector string to match, the default, no selector, means change priority of all messages"/>
+               <c:simple-property required="true" name="1:otherQueueName"
                                   displayName="Destination Queue" description="The name of the queue to move the message to"/>
             </parameters>
             <results>
@@ -442,10 +442,10 @@
          <operation name="countMessagesForSubscription" displayName="List Messages for Subscription"
                     description="Count the number of messages matching the filter for the given subscription.">
             <parameters>
-               <c:simple-property required="true" name="clientID" displayName="Client ID" description="The client ID of the durable subscriber"/>
-               <c:simple-property required="true" name="subscriptionName"
+               <c:simple-property required="true" name="0:clientID" displayName="Client ID" description="The client ID of the durable subscriber"/>
+               <c:simple-property required="true" name="1:subscriptionName"
                                   displayName="Durable Subscription Name" description="The name of the durable subscription"/>
-               <c:simple-property required="false" name="selector" displayName="JMS Selector" description="JMS Selector to match against, default null means count all messages"/>
+               <c:simple-property required="false" name="2:selector" displayName="JMS Selector" description="JMS Selector to match against, default null means count all messages"/>
             </parameters>
             <results>
                <c:simple-property name="operationResult" description="Message Subscriptions."/>
@@ -454,8 +454,8 @@
          <operation name="dropDurableSubscription" displayName="Drop Durable Subscription"
                     description="Drop a durable subscription.">
             <parameters>
-               <c:simple-property required="true" name="clientID" displayName="Client ID" description="The client ID of the durable subscriber"/>
-               <c:simple-property required="true" name="subscriptionName"
+               <c:simple-property required="true" name="0:clientID" displayName="Client ID" description="The client ID of the durable subscriber"/>
+               <c:simple-property required="true" name="1:subscriptionName"
                                   displayName="Durable Subscription Name" description="The name of the durable subscription"/>
             </parameters>
          </operation>
