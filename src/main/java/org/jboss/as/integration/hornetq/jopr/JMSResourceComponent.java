@@ -215,64 +215,105 @@ public abstract class JMSResourceComponent implements ResourceComponent, Measure
 
    private void populateParams(final Collection<PropertySimple> props, final SimpleValueSupport[] params, final SimpleValueSupport[] signature)
    {
-      int pos = 0;
-      for (PropertySimple prop : props)
+      if (props.isEmpty())
       {
-         String[] val = prop.getName().split(":");
+         return;
+      }
+      if (props.size() == 1)
+      {
+         // When an operation has a single param, name attribute has the following form "[type:]name"
+         PropertySimple prop = props.iterator().next();
+         String[] val = prop.getName().split(":", 2);
          if (val.length == 1)
          {
-            params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getStringValue()));
-            signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "java.lang.String");
+            populateParam(0, prop, null, params, signature);
          }
          else
          {
-            if (val[0].equals("Boolean"))
+            populateParam(0, prop, val[0], params, signature);
+         }
+         return;
+      }
+      for (PropertySimple prop : props)
+      {
+         // When an operation has multiple params, name attribute has the following form "pos:[type:]name"
+         String[] val = prop.getName().split(":", 3);
+         if (val.length == 1)
+         {
+            throw new IllegalArgumentException("Invalid operation param [" + val[0] + "]");
+         }
+         else
+         {
+            int pos;
+            try
             {
-               params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getBooleanValue()));
-               signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "java.lang.Boolean");
+               pos = Integer.parseInt(val[0]);
+            } catch (NumberFormatException e)
+            {
+               throw new IllegalArgumentException("Invalid param position [" + val[0] + "]");
             }
-            else if (val[0].equals("boolean"))
+            if (val.length == 2)
             {
-               params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getBooleanValue()));
-               signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "boolean");
+               populateParam(pos, prop, null, params, signature);
             }
-            else if (val[0].equals("String"))
+            else
             {
-               params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getStringValue()));
-               signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "java.lang.String");
-            }
-            else if (val[0].equals("Long"))
-            {
-               params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getLongValue()));
-               signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "java.lang.Long");
-            }
-            else if (val[0].equals("long"))
-            {
-               params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getLongValue()));
-               signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "long");
-            }
-            else if (val[0].equals("Integer"))
-            {
-               params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getIntegerValue()));
-               signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "java.lang.Integer");
-            }
-            else if (val[0].equals("int"))
-            {
-               params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getIntegerValue()));
-               signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "int");
-            }
-            else if (val[0].equals("Double"))
-            {
-               params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getDoubleValue()));
-               signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "java.lang.Double");
-            }
-            else if (val[0].equals("double"))
-            {
-               params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getDoubleValue()));
-               signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "double");
+               populateParam(pos, prop, val[1], params, signature);
             }
          }
-         pos++;
+      }
+   }
+
+   private void populateParam(int pos, PropertySimple prop, String paramType, SimpleValueSupport[] params, SimpleValueSupport[] signature)
+   {
+      if (paramType == null || paramType.equals("String"))
+      {
+         params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getStringValue()));
+         signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "java.lang.String");
+      }
+      else if (paramType.equals("Boolean"))
+      {
+         params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getBooleanValue()));
+         signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "java.lang.Boolean");
+      }
+      else if (paramType.equals("boolean"))
+      {
+         params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getBooleanValue()));
+         signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "boolean");
+      }
+      else if (paramType.equals("Long"))
+      {
+         params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getLongValue()));
+         signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "java.lang.Long");
+      }
+      else if (paramType.equals("long"))
+      {
+         params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getLongValue()));
+         signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "long");
+      }
+      else if (paramType.equals("Integer"))
+      {
+         params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getIntegerValue()));
+         signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "java.lang.Integer");
+      }
+      else if (paramType.equals("int"))
+      {
+         params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getIntegerValue()));
+         signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "int");
+      }
+      else if (paramType.equals("Double"))
+      {
+         params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getDoubleValue()));
+         signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "java.lang.Double");
+      }
+      else if (paramType.equals("double"))
+      {
+         params[pos] = new SimpleValueSupport(SimpleMetaType.STRING, getStringValue(prop.getDoubleValue()));
+         signature[pos] = new SimpleValueSupport(SimpleMetaType.STRING, "double");
+      }
+      else
+      {
+         throw new IllegalArgumentException("Unknown paramType[" + paramType + "]");
       }
    }
 
